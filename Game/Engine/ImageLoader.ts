@@ -7,7 +7,7 @@ enum ImageType
 
 class ImageLoader
 {
-    images: Map<ImageType, IMGData>;
+    images: Map<string, IMGData>;
 
     Init()
     {
@@ -15,11 +15,16 @@ class ImageLoader
         return this;
     }
 
+    Get(key: ImageType)
+    {
+        return this.images.get(ImageType[key]);
+    }
+
     Add(key: ImageType, path: string)
     {
         let data = new IMGData();
         data.path = path;
-        this.images.set(key, data);
+        this.images.set(ImageType[key], data);
     }
 
     Load(oncomplete: () => any)
@@ -30,27 +35,18 @@ class ImageLoader
         if (total === 0)
             oncomplete();
 
-        for (let item in ImageType)
+        this.images.forEach((data: IMGData, key: string) =>
         {
-            if (isNaN(Number(item)))
+            data.raw = new Image();
+            data.raw.onload = function()
             {
-                let a = <ImageType><any>ImageType[item]
-                if (a == ImageType.None)
-                    continue;
+                imgCounter++;
+                if (imgCounter === total)
+                    oncomplete();
+            };
 
-                let data = this.images.get(a);
-
-                data.raw = new Image();
-                data.raw.onload = function()
-                {
-                    imgCounter++;
-                    if (imgCounter === total)
-                        oncomplete();
-                };
-
-                data.raw.src = data.path;
-            }
-        }
+            data.raw.src = data.path;
+        });
 
         return this;
     }

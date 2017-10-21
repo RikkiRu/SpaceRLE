@@ -18,6 +18,8 @@ var Render = (function () {
         ctx.scale(gameTS.camera.scale.x, gameTS.camera.scale.y);
         ctx.translate(-ctxSize2.x, -ctxSize2.y);
         ctx.translate(-gameTS.camera.position.x + ctxSize2.x, -gameTS.camera.position.y + ctxSize2.y);
+        // Идея для слоёв: пройти 1 по всем раз формируя список слоёв используя enum и тут же отрисовывая 1ый
+        // Дорисовать остальные
         for (var i in gameTS.renderObjects) {
             var obj = gameTS.renderObjects[i];
             obj.Draw(ctx);

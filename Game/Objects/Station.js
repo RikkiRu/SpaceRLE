@@ -8,7 +8,7 @@ var Station = (function () {
     };
     Station.prototype.Draw = function (ctx) {
         var spriteType = this.isMainStation ? ImageType.StationBig : ImageType.StationSmall;
-        var img = gameTS.imageLoader.images.get(spriteType);
+        var img = gameTS.imageLoader.Get(spriteType);
         ctx.drawImage(img.raw, this.position.x - img.raw.width / 2, this.position.y - img.raw.height / 2);
     };
     return Station;
