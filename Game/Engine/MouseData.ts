@@ -31,7 +31,6 @@ class MouseData
 			return;
 
 		this.mouseDown = isDown;
-		console.log("Mouse down " + isDown);
 	}
 
 	UpdateGameCoords()

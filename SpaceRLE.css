@@ -1,0 +1,17 @@
+.newGameBtn
+{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background-color: #35247F;
+    font-family: Verdana, sans-serif;
+    padding: 5px 15px 5px 15px;
+    cursor: pointer;
+    color: #A4ADBC;
+}
+
+.newGameBtn:hover
+{
+    background-color: #221751;
+    color: #8B929E;
+}

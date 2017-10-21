@@ -13,8 +13,16 @@ var Render = (function () {
         var ctx = gameTS.canvas.ctx;
         ctx.clearRect(0, 0, gameTS.canvas.ctxSize.x, gameTS.canvas.ctxSize.y);
         ctx.save();
-        // Render all by layers
-        ctx.drawImage(gameTS.imageLoader.images[0].raw, 0, 0, 64, 64);
+        var ctxSize2 = gameTS.canvas.ctxSize2;
+        ctx.translate(ctxSize2.x, ctxSize2.y);
+        ctx.scale(gameTS.camera.scale.x, gameTS.camera.scale.y);
+        ctx.translate(-ctxSize2.x, -ctxSize2.y);
+        ctx.translate(-gameTS.camera.position.x + ctxSize2.x, -gameTS.camera.position.y + ctxSize2.y);
+        for (var i in gameTS.renderObjects) {
+            var obj = gameTS.renderObjects[i];
+            obj.Draw(ctx);
+            //ctx.drawImage(gameTS.imageLoader.images[0].raw, -32, -32, 64, 64);
+        }
         ctx.restore();
         window.requestAnimationFrame(gameTS.render.Render);
     };

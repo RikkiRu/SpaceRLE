@@ -23,7 +23,6 @@ var MouseData = (function () {
         if (this.mouseDown === isDown)
             return;
         this.mouseDown = isDown;
-        console.log("Mouse down " + isDown);
     };
     MouseData.prototype.UpdateGameCoords = function () {
         var centerOffsetX = (this.rawPosition.x - this.canvas.center.x) / this.camera.scale.x;

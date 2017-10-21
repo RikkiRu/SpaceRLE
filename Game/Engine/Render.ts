@@ -1,3 +1,8 @@
+interface RenderObject
+{
+    Draw(ctx:CanvasRenderingContext2D);
+}
+
 class Render
 {
     Init()
@@ -19,8 +24,23 @@ class Render
         ctx.clearRect(0, 0, gameTS.canvas.ctxSize.x, gameTS.canvas.ctxSize.y);
         ctx.save();
 
-        // Render all by layers
-        ctx.drawImage(gameTS.imageLoader.images[0].raw, 0, 0, 64, 64);
+        let ctxSize2 = gameTS.canvas.ctxSize2;
+
+        ctx.translate(ctxSize2.x, ctxSize2.y);
+        ctx.scale(gameTS.camera.scale.x, gameTS.camera.scale.y);
+        ctx.translate(-ctxSize2.x, -ctxSize2.y);
+
+        ctx.translate(-gameTS.camera.position.x + ctxSize2.x, -gameTS.camera.position.y + ctxSize2.y);
+
+        // Идея для слоёв: пройти 1 по всем раз формируя список слоёв используя enum и тут же отрисовывая 1ый
+        // Дорисовать остальные
+
+        for (let i in gameTS.renderObjects)
+        {
+            let obj = gameTS.renderObjects[i];
+            obj.Draw(ctx);
+             //ctx.drawImage(gameTS.imageLoader.images[0].raw, -32, -32, 64, 64);
+        }
 
         ctx.restore();
 
