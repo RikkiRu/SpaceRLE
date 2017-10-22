@@ -4,6 +4,11 @@ interface IRenderObject
     Draw(ctx:CanvasRenderingContext2D): void;
 }
 
+interface IUpdatable
+{
+    Update(dt: number);
+}
+
 class Render
 {
     Init()
@@ -48,6 +53,12 @@ class Render
             }
 
             arr.push(obj);
+
+            if ((<any>obj).Update !== undefined)
+            {
+                let updateble = <IUpdatable><any>obj;
+                updateble.Update(dt);
+            }
         }
 
         const layersValues = Object.keys(RenderLayer).map(k => RenderLayer[k]);

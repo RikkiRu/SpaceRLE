@@ -15,3 +15,24 @@
     background-color: #221751;
     color: #8B929E;
 }
+
+.hireBtn
+{
+    background-color: #35247F;
+    position: absolute;
+}
+
+.hireBtn:hover
+{
+    background-color: #221751;
+}
+
+.hireShip1
+{
+    left: 10px;
+    bottom: 10px;
+    width: 64px;
+    height: 64px;
+    background-image: url("Game/Sprites/ship1.png");
+    background-size: cover;
+}

@@ -28,6 +28,10 @@ var Render = (function () {
                 sort.set(objLayer, arr);
             }
             arr.push(obj);
+            if (obj.Update !== undefined) {
+                var updateble = obj;
+                updateble.Update(dt);
+            }
         }
         var layersValues = Object.keys(RenderLayer).map(function (k) { return RenderLayer[k]; });
         var layersNames = layersValues.filter(function (v) { return typeof v === "string"; });

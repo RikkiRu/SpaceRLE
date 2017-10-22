@@ -11,7 +11,7 @@ class Station implements IRenderObject
 
     GetLayer(): RenderLayer
     {
-        return RenderLayer.Station;
+        return RenderLayer.Stations;
     }
 
     Draw(ctx: CanvasRenderingContext2D)

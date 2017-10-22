@@ -31,6 +31,7 @@ class MouseData
 			return;
 
 		this.mouseDown = isDown;
+		gameTS.ProcessMouse(isDown);
 	}
 
 	UpdateGameCoords()

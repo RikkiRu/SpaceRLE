@@ -15,10 +15,14 @@
 		<script type="text/javascript" src="Game/Engine/Vector2.js"></script>
 		<script type="text/javascript" src="Game/Engine/ImageLoader.js"></script>
 		<script type="text/javascript" src="Game/Engine/Render.js"></script>
+		<script type="text/javascript" src="Game/Engine/RenderUtils.js"></script>
+		<script type="text/javascript" src="Game/Engine/Rect.js"></script>
 
 		<!-- Game scripts -->
 		<script type="text/javascript" src="Game/SpaceRLE.js"></script>
-		<script type="text/javascript" src="Game/Objects/Station.js"></script>
+		<script type="text/javascript" src="Game/CustomScripts/Station.js"></script>
+		<script type="text/javascript" src="Game/CustomScripts/HireController.js"></script>
+		<script type="text/javascript" src="Game/CustomScripts/ShipsManager.js"></script>
 
 		<link rel="stylesheet" href="SpaceRLE.css" type="text/css">
 
@@ -27,6 +31,9 @@
 	<body style="width: 100%; height: 100%; overflow: hidden; padding: 0; margin: 0; user-select: none;">
 		<canvas id="canvasMain" style="background-color: #0C062D; width: 100%; height: 100%;"></canvas>
 		<div id="newGameBtn" class="newGameBtn"> NEW GAME </div>
+
+		<div id="hireShip1" class="hireBtn hireShip1"></div>
+
 	</body>
 
 </html>

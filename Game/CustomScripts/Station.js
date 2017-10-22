@@ -7,7 +7,7 @@ var Station = (function () {
         return this;
     };
     Station.prototype.GetLayer = function () {
-        return RenderLayer.Station;
+        return RenderLayer.Stations;
     };
     Station.prototype.Draw = function (ctx) {
         var spriteType = this.isMainStation ? ImageType.StationBig : ImageType.StationSmall;

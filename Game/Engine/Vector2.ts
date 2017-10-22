@@ -9,4 +9,9 @@ class Vector2
 		this.y = y;
 		return this;
 	}
+
+	DistTo(v: Vector2)
+	{
+		return Math.sqrt(Math.pow(this.x - v.x, 2) + Math.pow(this.y - v.y, 2));
+	}
 }
