@@ -6,6 +6,19 @@ $(document).ready(function()
 	gameTS.Start();
 });
 
+enum ImageType
+{
+    None,
+    StationSmall,
+    StationBig,
+}
+
+enum RenderLayer
+{
+	None,
+	Station,
+}
+
 class GameTS
 {
 	canvas: CanvasData;
@@ -14,7 +27,7 @@ class GameTS
 	mouseData: MouseData;
 	render: Render;
 	imageLoader: ImageLoader;
-	renderObjects: RenderObject[];
+	renderObjects: IRenderObject[];
 
  	Start()
 	{

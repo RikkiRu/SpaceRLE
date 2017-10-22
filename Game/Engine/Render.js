@@ -18,12 +18,29 @@ var Render = (function () {
         ctx.scale(gameTS.camera.scale.x, gameTS.camera.scale.y);
         ctx.translate(-ctxSize2.x, -ctxSize2.y);
         ctx.translate(-gameTS.camera.position.x + ctxSize2.x, -gameTS.camera.position.y + ctxSize2.y);
-        // Идея для слоёв: пройти 1 по всем раз формируя список слоёв используя enum и тут же отрисовывая 1ый
-        // Дорисовать остальные
-        for (var i in gameTS.renderObjects) {
-            var obj = gameTS.renderObjects[i];
-            obj.Draw(ctx);
-            //ctx.drawImage(gameTS.imageLoader.images[0].raw, -32, -32, 64, 64);
+        var sort = new Map();
+        for (var i_1 in gameTS.renderObjects) {
+            var obj = gameTS.renderObjects[i_1];
+            var objLayer = obj.GetLayer();
+            var arr = sort.get(objLayer);
+            if (arr == null) {
+                arr = [];
+                sort.set(objLayer, arr);
+            }
+            arr.push(obj);
+        }
+        var layersValues = Object.keys(RenderLayer).map(function (k) { return RenderLayer[k]; });
+        var layersNames = layersValues.filter(function (v) { return typeof v === "string"; });
+        for (var i in layersNames) {
+            var v = RenderLayer[layersNames[i]];
+            var r = v;
+            var objs = sort.get(r);
+            if (objs != null) {
+                for (var j = 0; j < objs.length; j++) {
+                    var obj = objs[j];
+                    obj.Draw(ctx);
+                }
+            }
         }
         ctx.restore();
         window.requestAnimationFrame(gameTS.render.Render);

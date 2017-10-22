@@ -3,6 +3,17 @@ $(document).ready(function () {
     gameTS = new GameTS();
     gameTS.Start();
 });
+var ImageType;
+(function (ImageType) {
+    ImageType[ImageType["None"] = 0] = "None";
+    ImageType[ImageType["StationSmall"] = 1] = "StationSmall";
+    ImageType[ImageType["StationBig"] = 2] = "StationBig";
+})(ImageType || (ImageType = {}));
+var RenderLayer;
+(function (RenderLayer) {
+    RenderLayer[RenderLayer["None"] = 0] = "None";
+    RenderLayer[RenderLayer["Station"] = 1] = "Station";
+})(RenderLayer || (RenderLayer = {}));
 var GameTS = (function () {
     function GameTS() {
         this.time = 0;

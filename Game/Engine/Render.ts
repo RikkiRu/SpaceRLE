@@ -1,6 +1,7 @@
-interface RenderObject
+interface IRenderObject
 {
-    Draw(ctx:CanvasRenderingContext2D);
+    GetLayer(): RenderLayer;
+    Draw(ctx:CanvasRenderingContext2D): void;
 }
 
 class Render
@@ -32,14 +33,41 @@ class Render
 
         ctx.translate(-gameTS.camera.position.x + ctxSize2.x, -gameTS.camera.position.y + ctxSize2.y);
 
-        // Идея для слоёв: пройти 1 по всем раз формируя список слоёв используя enum и тут же отрисовывая 1ый
-        // Дорисовать остальные
+        let sort: Map<RenderLayer, IRenderObject[]> = new Map();
 
         for (let i in gameTS.renderObjects)
         {
             let obj = gameTS.renderObjects[i];
-            obj.Draw(ctx);
-             //ctx.drawImage(gameTS.imageLoader.images[0].raw, -32, -32, 64, 64);
+            let objLayer = obj.GetLayer();
+            let arr = sort.get(objLayer);
+
+            if (arr == null)
+            {
+                arr = [];
+                sort.set(objLayer, arr);
+            }
+
+            arr.push(obj);
+        }
+
+        const layersValues = Object.keys(RenderLayer).map(k => RenderLayer[k]);
+        const layersNames = layersValues.filter(v => typeof v === "string") as string[];
+
+        for (var i in layersNames)
+        {
+            var v: any = RenderLayer[layersNames[i]];
+            let r: RenderLayer = v;
+
+            let objs = sort.get(r);
+
+            if (objs != null)
+            {
+                for (let j=0; j<objs.length; j++)
+                {
+                    let obj = objs[j];
+                    obj.Draw(ctx);
+                }
+            }
         }
 
         ctx.restore();

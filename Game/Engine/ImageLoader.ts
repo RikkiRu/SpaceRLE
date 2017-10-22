@@ -1,10 +1,3 @@
-enum ImageType
-{
-    None,
-    StationSmall,
-    StationBig,
-}
-
 class ImageLoader
 {
     images: Map<string, IMGData>;

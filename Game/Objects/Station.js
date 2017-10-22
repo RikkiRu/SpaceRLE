@@ -6,6 +6,9 @@ var Station = (function () {
         this.position = position;
         return this;
     };
+    Station.prototype.GetLayer = function () {
+        return RenderLayer.Station;
+    };
     Station.prototype.Draw = function (ctx) {
         var spriteType = this.isMainStation ? ImageType.StationBig : ImageType.StationSmall;
         var img = gameTS.imageLoader.Get(spriteType);

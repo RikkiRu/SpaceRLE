@@ -1,9 +1,3 @@
-var ImageType;
-(function (ImageType) {
-    ImageType[ImageType["None"] = 0] = "None";
-    ImageType[ImageType["StationSmall"] = 1] = "StationSmall";
-    ImageType[ImageType["StationBig"] = 2] = "StationBig";
-})(ImageType || (ImageType = {}));
 var ImageLoader = (function () {
     function ImageLoader() {
     }

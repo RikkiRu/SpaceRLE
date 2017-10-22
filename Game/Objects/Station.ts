@@ -1,4 +1,4 @@
-class Station implements RenderObject
+class Station implements IRenderObject
 {
     isMainStation = false;
     position: Vector2;
@@ -7,6 +7,11 @@ class Station implements RenderObject
     {
         this.position = position;
         return this;
+    }
+
+    GetLayer(): RenderLayer
+    {
+        return RenderLayer.Station;
     }
 
     Draw(ctx: CanvasRenderingContext2D)
