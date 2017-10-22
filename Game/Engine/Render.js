@@ -10,6 +10,13 @@ var Render = (function () {
         var now = (new Date).getTime();
         var dt = now - gameTS.time;
         gameTS.time = now;
+        for (var i_1 in gameTS.renderObjects) {
+            var obj = gameTS.renderObjects[i_1];
+            if (obj.Update !== undefined) {
+                var updateble = obj;
+                updateble.Update(dt);
+            }
+        }
         var ctx = gameTS.canvas.ctx;
         ctx.clearRect(0, 0, gameTS.canvas.ctxSize.x, gameTS.canvas.ctxSize.y);
         ctx.save();
@@ -19,8 +26,8 @@ var Render = (function () {
         ctx.translate(-ctxSize2.x, -ctxSize2.y);
         ctx.translate(-gameTS.camera.position.x + ctxSize2.x, -gameTS.camera.position.y + ctxSize2.y);
         var sort = new Map();
-        for (var i_1 in gameTS.renderObjects) {
-            var obj = gameTS.renderObjects[i_1];
+        for (var i_2 in gameTS.renderObjects) {
+            var obj = gameTS.renderObjects[i_2];
             var objLayer = obj.GetLayer();
             var arr = sort.get(objLayer);
             if (arr == null) {
@@ -28,10 +35,6 @@ var Render = (function () {
                 sort.set(objLayer, arr);
             }
             arr.push(obj);
-            if (obj.Update !== undefined) {
-                var updateble = obj;
-                updateble.Update(dt);
-            }
         }
         var layersValues = Object.keys(RenderLayer).map(function (k) { return RenderLayer[k]; });
         var layersNames = layersValues.filter(function (v) { return typeof v === "string"; });

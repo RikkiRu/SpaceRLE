@@ -14,9 +14,10 @@ var RenderLayer;
 (function (RenderLayer) {
     RenderLayer[RenderLayer["None"] = 0] = "None";
     RenderLayer[RenderLayer["SelectionGUI"] = 1] = "SelectionGUI";
-    RenderLayer[RenderLayer["Stations"] = 2] = "Stations";
-    RenderLayer[RenderLayer["MediumShips"] = 3] = "MediumShips";
-    RenderLayer[RenderLayer["GUI"] = 4] = "GUI";
+    RenderLayer[RenderLayer["Bullets"] = 2] = "Bullets";
+    RenderLayer[RenderLayer["Stations"] = 3] = "Stations";
+    RenderLayer[RenderLayer["MediumShips"] = 4] = "MediumShips";
+    RenderLayer[RenderLayer["GUI"] = 5] = "GUI";
 })(RenderLayer || (RenderLayer = {}));
 var GameTS = (function () {
     function GameTS() {

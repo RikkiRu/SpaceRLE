@@ -11,6 +11,9 @@ var Vector2 = (function () {
     Vector2.prototype.DistTo = function (v) {
         return Math.sqrt(Math.pow(this.x - v.x, 2) + Math.pow(this.y - v.y, 2));
     };
+    Vector2.prototype.Clone = function () {
+        return new Vector2().Init(this.x, this.y);
+    };
     return Vector2;
 }());
 //# sourceMappingURL=Vector2.js.map

@@ -18,6 +18,7 @@ enum RenderLayer
 {
 	None,
 	SelectionGUI,
+	Bullets,
 	Stations,
 	MediumShips,
 	GUI,

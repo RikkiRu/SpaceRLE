@@ -6,6 +6,7 @@ var HireController = (function () {
         var t = -h / 2;
         this.hireZoneRectL = new Rect().Init(-w - dx, t, w, h);
         this.hireZoneRectR = new Rect().Init(dx, t, w, h);
+        this.battleRect = new Rect().Init(-450, -300, 900, 600);
     }
     HireController.prototype.PrepareToHire = function (shipType) {
         if (this.shipPreview != null) {
@@ -31,6 +32,8 @@ var HireController = (function () {
             }
             gameTS.RemoveObject(this.shipPreview);
             gameTS.RemoveObject(this.hireZone);
+            this.shipPreview = null;
+            this.hireZone = null;
             return true;
         }
         return false;

@@ -4,6 +4,7 @@ class HireController
     hireZone: HireZone;
     hireZoneRectL: Rect;
     hireZoneRectR: Rect;
+    battleRect: Rect;
 
     constructor()
     {
@@ -14,6 +15,7 @@ class HireController
 
         this.hireZoneRectL = new Rect().Init(-w-dx, t, w, h);
         this.hireZoneRectR = new Rect().Init(dx, t, w, h);
+        this.battleRect = new Rect().Init(-450, -300, 900, 600);
     }
 
     PrepareToHire(shipType: ShipType)
@@ -53,6 +55,8 @@ class HireController
 
             gameTS.RemoveObject(this.shipPreview);
             gameTS.RemoveObject(this.hireZone);
+            this.shipPreview = null;
+            this.hireZone = null;
 
             return true;
         }

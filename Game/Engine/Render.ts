@@ -25,6 +25,17 @@ class Render
         var dt = now - gameTS.time;
         gameTS.time = now;
 
+        for (let i in gameTS.renderObjects)
+        {
+            let obj = gameTS.renderObjects[i];
+
+            if ((<any>obj).Update !== undefined)
+            {
+                let updateble = <IUpdatable><any>obj;
+                updateble.Update(dt);
+            }
+        }
+
         var ctx = gameTS.canvas.ctx;
 
         ctx.clearRect(0, 0, gameTS.canvas.ctxSize.x, gameTS.canvas.ctxSize.y);
@@ -53,12 +64,6 @@ class Render
             }
 
             arr.push(obj);
-
-            if ((<any>obj).Update !== undefined)
-            {
-                let updateble = <IUpdatable><any>obj;
-                updateble.Update(dt);
-            }
         }
 
         const layersValues = Object.keys(RenderLayer).map(k => RenderLayer[k]);

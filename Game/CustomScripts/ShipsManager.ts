@@ -44,6 +44,18 @@ class ShipsManager
         return this;
     }
 
+    SpawnBullet(team: Team, position: Vector2, angle: number)
+    {
+        let bulletSpeed = 0.3;
+        let dx = Math.cos(angle) * bulletSpeed;
+        let dy = Math.sin(angle) * bulletSpeed;
+        let moveDelta = new Vector2().Init(dx, dy);
+
+        let b = new Bullet();
+        b.Init(team, position.Clone(), moveDelta);
+        gameTS.renderObjects.push(b);
+    }
+
     SpawnShip(shipType: ShipType, team: Team, position: Vector2, angle: number)
     {
         let s = new Ship();
@@ -51,9 +63,132 @@ class ShipsManager
         s.team = team;
         s.position = position;
         s.angle = angle;
+        s.hp = s.template.maxHP;
         s.Init();
         this.ships.push(s);
         gameTS.renderObjects.push(s);
+    }
+
+    RemoveObject(obj: Ship)
+	{
+		for (let i=0; i<this.ships.length; i++)
+		{
+			let o = this.ships[i];
+			if (o === obj)
+			{
+				this.ships.splice(i, 1);
+				return;
+			}
+		}
+	}
+
+    DoDamage(target: Ship, damage: number)
+    {
+        if (target.hp < damage)
+            target.hp = 0;
+        else
+            target.hp -= damage;
+
+        if (target.hp <= 0)
+        {
+            gameTS.RemoveObject(target);
+            this.RemoveObject(target);
+        }
+        else
+        {
+            let hpText = new HpText();
+            hpText.Init(target.hp.toString(), 500, target.position.Clone());
+            gameTS.renderObjects.push(hpText);
+        }
+    }
+}
+
+class HpText implements IRenderObject, IUpdatable
+{
+    txt: string;
+    lifeTime: number;
+    pos: Vector2;
+
+    Init(txt: string, lifeTime: number, pos: Vector2)
+    {
+        this.txt = txt;
+        this.lifeTime = lifeTime;
+        this.pos = pos;
+    }
+
+    Update(dt: number)
+    {
+        this.pos.y -= dt * 0.02;
+
+        this.lifeTime -= dt;
+        if (this.lifeTime < 0)
+            gameTS.RemoveObject(this);
+    }
+
+    GetLayer(): RenderLayer
+    {
+        return RenderLayer.GUI;
+    }
+
+    Draw(ctx: CanvasRenderingContext2D): void
+    {
+        ctx.beginPath();
+        ctx.fillStyle = "#D82D33";
+        ctx.fillText(this.txt, this.pos.x, this.pos.y);
+    }
+}
+
+class Bullet implements IRenderObject, IUpdatable
+{
+    team: Team;
+    position: Vector2;
+    moveDelta: Vector2;
+    damage: number;
+
+    Init(team: Team, position: Vector2, moveDelta: Vector2)
+    {
+        this.team = team;
+        this.position = position;
+        this.moveDelta = moveDelta;
+        this.damage = 10;
+    }
+
+    Update(dt: number)
+    {
+        this.position.x += this.moveDelta.x * dt;
+        this.position.y += this.moveDelta.y * dt;
+
+        for (let i in gameTS.shipsManager.ships)
+        {
+            let ship = gameTS.shipsManager.ships[i];
+
+            if (ship.team === this.team || ship.team === Team.None)
+                continue;
+
+            if (this.position.DistTo(ship.position) < 20)
+            {
+                gameTS.RemoveObject(this);
+                gameTS.shipsManager.DoDamage(ship, this.damage);
+            }
+        }
+
+        if (!gameTS.hireController.battleRect.IsInside(this.position))
+        {
+            gameTS.RemoveObject(this);
+        }
+    }
+
+    GetLayer(): RenderLayer
+    {
+        return RenderLayer.Bullets;
+    }
+
+    Draw(ctx: CanvasRenderingContext2D): void
+    {
+       ctx.beginPath();
+       ctx.fillStyle = "#D0DB36";
+       ctx.ellipse(this.position.x, this.position.y, 2, 2, 0, 0, Math.PI * 2, false);
+       ctx.fill();
     }
 }
 
@@ -64,6 +199,7 @@ class Ship implements IRenderObject, IUpdatable
     mind: IShipMind;
     position: Vector2;
     angle: number;
+    hp: number;
 
     Init()
     {
@@ -97,27 +233,6 @@ class Ship implements IRenderObject, IUpdatable
         let img =  gameTS.imageLoader.Get(imgType);
         ctx.drawImage(img.raw, -img.raw.width / 2, -img.raw.height / 2);
         ctx.restore();
-
-        // if (!this.template.isStation)
-        // {
-        //     let m = <ShipMind><any>this.mind;
-        //     if(m.target != null)
-        //     {
-        //         let color = "#FF0000";
-        //         if(this.team == Team.Left)
-        //             color = "#0000FF"
-
-        //         ctx.beginPath();
-        //         ctx.moveTo(this.position.x, this.position.y);
-        //         ctx.lineTo(m.target.position.x, m.target.position.y);
-        //         ctx.lineWidth = 2;
-        //         ctx.strokeStyle = color;
-        //         ctx.stroke();
-
-        //         ctx.fillStyle = color;
-        //         ctx.fillRect(this.position.x, this.position.y, 10, 10);
-        //     }
-        // }
     }
 }
 
@@ -126,25 +241,13 @@ interface IShipMind extends IUpdatable
     Init(owner: Ship);
 }
 
-class StationMind implements IShipMind
-{
-    Init(owner: Ship)
-    {
-    }
-    Update(dt: number)
-    {
-    }
-}
-
-class ShipMind implements IShipMind
+class Targeter
 {
     owner: Ship;
-    target: Ship;
 
     Init(owner: Ship)
     {
         this.owner = owner;
-        this.SearchTarget();
     }
 
     SearchTarget()
@@ -170,70 +273,6 @@ class ShipMind implements IShipMind
 
         return bestTarget;
     }
-
-    Update(dt: number)
-    {
-        if (this.target == null)
-            this.target = this.SearchTarget();
-
-        if (this.target == null)
-            return;
-
-        this.RotateTo(this.target, dt);
-        this.FlyTo(this.target, dt);
-    }
-
-    FlyTo(target: Ship, dt: number)
-    {
-        //if (this.owner.position.DistTo(target.position) <= this.owner.template.attackDist)
-        //    return;
-
-        let dx = Math.cos(this.owner.angle) * dt * this.owner.template.maxMoveSpeed;
-        let dy = Math.sin(this.owner.angle) * dt * this.owner.template.maxMoveSpeed;
-
-        this.owner.position.x += dx;
-        this.owner.position.y += dy;
-    }
-
-    RotateTo(target: Ship, dt: number)
-    {
-        let currentPos = this.owner.position;
-        let targetPos = target.position;
-        let currentAngle = this.owner.angle;
-
-        let targetAngle = 0;
-
-        if (currentPos.x > targetPos.x)
-        {
-            let dx = targetPos.x - currentPos.x;
-            let dy = targetPos.y - currentPos.y;
-            targetAngle = Math.atan(dy / dx) + gameTS.renderUtils.DegToRad(180);
-        }
-        else
-        {
-            let dx = currentPos.x - targetPos.x;
-            let dy = currentPos.y - targetPos.y;
-            targetAngle = Math.atan(dy / dx);
-        }
-
-        let changeAngle = targetAngle - currentAngle;
-        let changeAngle2 = targetAngle - Math.PI * 2 - currentAngle;
-
-        if (Math.abs(changeAngle2) < Math.abs(changeAngle))
-            changeAngle = changeAngle2;
-
-        let canChangeByTemplate = this.owner.template.maxAngleSpeed * dt;
-
-        if (Math.abs(canChangeByTemplate) < Math.abs(changeAngle))
-        {
-            let sign = Math.sign(changeAngle);
-            this.owner.angle += sign * canChangeByTemplate;
-        }
-        else
-            this.owner.angle = targetAngle;
-
-        this.owner.angle %= Math.PI * 2;
-    }
 }
 
 class ShipTemplate
@@ -244,12 +283,18 @@ class ShipTemplate
     attackDist: number;
     maxMoveSpeed: number;
     maxAngleSpeed: number;
+    targetsUpdateRate: number;
+    fireCooldown: number;
+    maxHP: number;
 
     constructor()
     {
         this.isStation = false;
         this.attackDist = 150;
-        this.maxMoveSpeed = 0.01;
+        this.maxMoveSpeed = 0.03;
         this.maxAngleSpeed = 0.0003;
+        this.targetsUpdateRate = 1000;
+        this.fireCooldown = 700;
+        this.maxHP = 100;
     }
 }
