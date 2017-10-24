@@ -111,10 +111,20 @@ var Bullet = (function () {
         this.position = position;
         this.moveDelta = moveDelta;
         this.damage = 10;
+        this.lifeTime = 700;
     };
     Bullet.prototype.Update = function (dt) {
+        this.lifeTime -= dt;
+        if (this.lifeTime < 0) {
+            gameTS.RemoveObject(this);
+            return;
+        }
         this.position.x += this.moveDelta.x * dt;
         this.position.y += this.moveDelta.y * dt;
+        if (!gameTS.hireController.battleRect.IsInside(this.position)) {
+            gameTS.RemoveObject(this);
+            return;
+        }
         for (var i in gameTS.shipsManager.ships) {
             var ship = gameTS.shipsManager.ships[i];
             if (ship.team === this.team || ship.team === Team.None)
@@ -123,9 +133,6 @@ var Bullet = (function () {
                 gameTS.RemoveObject(this);
                 gameTS.shipsManager.DoDamage(ship, this.damage);
             }
-        }
-        if (!gameTS.hireController.battleRect.IsInside(this.position)) {
-            gameTS.RemoveObject(this);
         }
     };
     Bullet.prototype.GetLayer = function () {
@@ -198,7 +205,7 @@ var ShipTemplate = (function () {
         this.maxMoveSpeed = 0.03;
         this.maxAngleSpeed = 0.0003;
         this.targetsUpdateRate = 1000;
-        this.fireCooldown = 700;
+        this.fireCooldown = 400;
         this.maxHP = 100;
     }
     return ShipTemplate;

@@ -144,6 +144,7 @@ class Bullet implements IRenderObject, IUpdatable
     position: Vector2;
     moveDelta: Vector2;
     damage: number;
+    lifeTime: number;
 
     Init(team: Team, position: Vector2, moveDelta: Vector2)
     {
@@ -151,12 +152,27 @@ class Bullet implements IRenderObject, IUpdatable
         this.position = position;
         this.moveDelta = moveDelta;
         this.damage = 10;
+        this.lifeTime = 700;
     }
 
     Update(dt: number)
     {
+        this.lifeTime -= dt;
+
+        if (this.lifeTime < 0)
+        {
+            gameTS.RemoveObject(this);
+            return;
+        }
+
         this.position.x += this.moveDelta.x * dt;
         this.position.y += this.moveDelta.y * dt;
+
+        if (!gameTS.hireController.battleRect.IsInside(this.position))
+        {
+            gameTS.RemoveObject(this);
+            return;
+        }
 
         for (let i in gameTS.shipsManager.ships)
         {
@@ -170,11 +186,6 @@ class Bullet implements IRenderObject, IUpdatable
                 gameTS.RemoveObject(this);
                 gameTS.shipsManager.DoDamage(ship, this.damage);
             }
-        }
-
-        if (!gameTS.hireController.battleRect.IsInside(this.position))
-        {
-            gameTS.RemoveObject(this);
         }
     }
 
@@ -294,7 +305,7 @@ class ShipTemplate
         this.maxMoveSpeed = 0.03;
         this.maxAngleSpeed = 0.0003;
         this.targetsUpdateRate = 1000;
-        this.fireCooldown = 700;
+        this.fireCooldown = 400;
         this.maxHP = 100;
     }
 }
