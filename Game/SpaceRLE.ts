@@ -59,7 +59,7 @@ class GameTS
 		this.shipsManager = new ShipsManager().Init();
 
 		this.renderObjects = [];
-		$("#newGameBtn").on('click touchstart', function() { alert("Touch start?"); gameTS.Restart(); });
+		$("#newGameBtn").on('click touchstart', function() { gameTS.Restart(); });
 		$("#hireShip1").on('click touchstart', function() { gameTS.hireController.PrepareToHire(ShipType.Ship1) });
 		this.Restart();
 	}
@@ -118,11 +118,8 @@ class GameTS
 
 	ProcessMouse(isDown: boolean)
 	{
-		if (isDown)
-		{
-			if (this.hireController.ProcessMouse(isDown))
-				return;
-		}
+		if (this.hireController.ProcessMouse(isDown))
+			return;
 	}
 }
 

@@ -9,33 +9,37 @@ var HireController = (function () {
         this.battleRect = new Rect().Init(-450, -300, 900, 600);
     }
     HireController.prototype.PrepareToHire = function (shipType) {
-        if (this.shipPreview != null) {
+        if (this.shipPreview != null)
             gameTS.RemoveObject(this.shipPreview);
+        if (this.hireZone != null)
             gameTS.RemoveObject(this.hireZone);
-        }
-        this.shipPreview = new ShipPreview();
-        this.shipPreview.Init(shipType);
-        gameTS.renderObjects.push(this.shipPreview);
         this.hireZone = new HireZone();
         this.hireZone.Init(this.hireZoneRectL);
         gameTS.renderObjects.push(this.hireZone);
+        this.shipType = shipType;
     };
     HireController.prototype.ProcessMouse = function (isDown) {
+        if (this.hireZone == null)
+            return;
+        if (isDown) {
+            if (this.shipPreview == null) {
+                this.shipPreview = new ShipPreview();
+                this.shipPreview.Init(this.shipType);
+                gameTS.renderObjects.push(this.shipPreview);
+                console.log("create preview");
+            }
+            return false;
+        }
         if (this.shipPreview != null) {
             if (this.hireZoneRectL.IsInside(gameTS.mouseData.gamePosition)) {
                 gameTS.shipsManager.SpawnShip(this.shipPreview.shipType, Team.Left, gameTS.mouseData.gamePosition, this.shipPreview.shipAngle);
                 gameTS.shipsManager.SpawnShip(this.shipPreview.shipType, Team.Right, this.hireZoneRectR.GetRandomPoint(), gameTS.renderUtils.DegToRad(180));
             }
-            else {
-                //gameTS.shipsManager.SpawnShip(
-                //    this.shipPreview.shipType, Team.Right, gameTS.mouseData.gamePosition, this.shipPreview.shipAngle);
-            }
             gameTS.RemoveObject(this.shipPreview);
-            gameTS.RemoveObject(this.hireZone);
             this.shipPreview = null;
-            this.hireZone = null;
-            return true;
         }
+        gameTS.RemoveObject(this.hireZone);
+        this.hireZone = null;
         return false;
     };
     return HireController;
@@ -50,6 +54,7 @@ var HireZone = (function () {
         return RenderLayer.SelectionGUI;
     };
     HireZone.prototype.Draw = function (ctx) {
+        console.log("drw");
         ctx.fillStyle = "#251F42";
         ctx.fillRect(this.rect.leftTop.x, this.rect.leftTop.y, this.rect.size.x, this.rect.size.y);
     };

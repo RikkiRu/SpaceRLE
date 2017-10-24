@@ -41,7 +41,7 @@ var GameTS = (function () {
         this.hireController = new HireController();
         this.shipsManager = new ShipsManager().Init();
         this.renderObjects = [];
-        $("#newGameBtn").on('click touchstart', function () { alert("Touch start?"); gameTS.Restart(); });
+        $("#newGameBtn").on('click touchstart', function () { gameTS.Restart(); });
         $("#hireShip1").on('click touchstart', function () { gameTS.hireController.PrepareToHire(ShipType.Ship1); });
         this.Restart();
     };
@@ -75,10 +75,8 @@ var GameTS = (function () {
         }
     };
     GameTS.prototype.ProcessMouse = function (isDown) {
-        if (isDown) {
-            if (this.hireController.ProcessMouse(isDown))
-                return;
-        }
+        if (this.hireController.ProcessMouse(isDown))
+            return;
     };
     return GameTS;
 }());

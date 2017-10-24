@@ -7,14 +7,18 @@ var MouseData = (function () {
         this.canvas = canvas;
         this.camera = camera;
         var self = this;
+        this.gamePosition = new Vector2().Init(0, 0);
+        this.rawPosition = new Vector2().Init(0, 0);
         canvas.html.addEventListener("mousemove", function (event) { self.UpdateRawGameCoords(event, this); });
-        canvas.canvasJquery.on('mousedown touchstart', function () { self.MouseState(true); });
-        canvas.canvasJquery.on('mouseup touchend', function () { self.MouseState(false); });
-        canvas.html.addEventListener("touchmove", function (event) { self.UpdateRawGameCoordsE(event, this); });
+        canvas.html.addEventListener("mousedown", function (event) { self.MouseState(event, this, true); });
+        canvas.html.addEventListener("mouseup", function (event) { self.MouseState(event, this, false); });
+        canvas.html.addEventListener("touchstart", function (event) { self.MouseStateTouch(event, this, true); });
+        canvas.html.addEventListener("touchend", function (event) { self.MouseStateTouch(event, this, false); });
+        canvas.html.addEventListener("touchmove", function (event) { self.UpdateRawGameCoordsTouch(event, this); });
         canvas.html.oncontextmenu = function (event) { return false; };
         return this;
     };
-    MouseData.prototype.UpdateRawGameCoordsE = function (e, context) {
+    MouseData.prototype.UpdateRawGameCoordsTouch = function (e, context) {
         if (e.touches.length < 1)
             return;
         var coords = context.getBoundingClientRect();
@@ -26,9 +30,17 @@ var MouseData = (function () {
         this.rawPosition = new Vector2().Init(e.clientX - coords.left, e.clientY - coords.top);
         this.UpdateGameCoords();
     };
-    MouseData.prototype.MouseState = function (isDown) {
+    MouseData.prototype.MouseStateTouch = function (e, context, isDown) {
         if (this.mouseDown === isDown)
             return;
+        gameTS.mouseData.UpdateRawGameCoordsTouch(e, context);
+        this.mouseDown = isDown;
+        gameTS.ProcessMouse(isDown);
+    };
+    MouseData.prototype.MouseState = function (e, context, isDown) {
+        if (this.mouseDown === isDown)
+            return;
+        gameTS.mouseData.UpdateRawGameCoords(e, context);
         this.mouseDown = isDown;
         gameTS.ProcessMouse(isDown);
     };

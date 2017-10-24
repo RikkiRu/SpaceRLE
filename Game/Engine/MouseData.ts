@@ -14,16 +14,21 @@ class MouseData
 		this.camera = camera;
 		let self = this;
 
+		this.gamePosition = new Vector2().Init(0, 0);
+		this.rawPosition = new Vector2().Init(0, 0);
+
 		canvas.html.addEventListener("mousemove", function(event) { self.UpdateRawGameCoords(event, this); });
-		canvas.canvasJquery.on('mousedown touchstart', function() { self.MouseState(true); });
-		canvas.canvasJquery.on('mouseup touchend', function() { self.MouseState(false); });
-		canvas.html.addEventListener("touchmove", function(event) { self.UpdateRawGameCoordsE(event, this); });
+		canvas.html.addEventListener("mousedown", function(event) { self.MouseState(event, this, true); });
+		canvas.html.addEventListener("mouseup", function(event) { self.MouseState(event, this, false); });
+		canvas.html.addEventListener("touchstart", function(event) { self.MouseStateTouch(event, this, true); });
+		canvas.html.addEventListener("touchend", function(event) { self.MouseStateTouch(event, this, false); });
+		canvas.html.addEventListener("touchmove", function(event) { self.UpdateRawGameCoordsTouch(event, this); });
 
 		canvas.html.oncontextmenu = function(event) { return false; };
 		return this;
 	}
 
-	UpdateRawGameCoordsE(e: TouchEvent, context: HTMLCanvasElement)
+	UpdateRawGameCoordsTouch(e: TouchEvent, context: HTMLCanvasElement)
 	{
 		if (e.touches.length < 1)
 			return;
@@ -40,10 +45,23 @@ class MouseData
 		this.UpdateGameCoords();
 	}
 
-	MouseState(isDown: boolean)
+	MouseStateTouch(e: TouchEvent, context: HTMLCanvasElement, isDown: boolean)
 	{
 		if (this.mouseDown === isDown)
 			return;
+
+		gameTS.mouseData.UpdateRawGameCoordsTouch(e, context);
+
+		this.mouseDown = isDown;
+		gameTS.ProcessMouse(isDown);
+	}
+
+	MouseState(e: MouseEvent, context: HTMLCanvasElement, isDown: boolean)
+	{
+		if (this.mouseDown === isDown)
+			return;
+
+		gameTS.mouseData.UpdateRawGameCoords(e, context);
 
 		this.mouseDown = isDown;
 		gameTS.ProcessMouse(isDown);
