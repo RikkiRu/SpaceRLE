@@ -20,7 +20,8 @@ var CanvasData = (function () {
         configurable: true
     });
     CanvasData.prototype.Init = function (canvasName) {
-        this.html = $("#" + canvasName)[0];
+        this.canvasJquery = $("#" + canvasName);
+        this.html = this.canvasJquery[0];
         var size = this.ctxSize;
         this.html.width = size.x;
         this.html.height = size.y;

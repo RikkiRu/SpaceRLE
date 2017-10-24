@@ -1,3 +1,4 @@
+/// <reference path="..\..\Scripts\typings\jquery-3.2.1.d.ts"/>
 var MouseData = (function () {
     function MouseData() {
         this.mouseDown = false;
@@ -7,10 +8,8 @@ var MouseData = (function () {
         this.camera = camera;
         var self = this;
         canvas.html.addEventListener("mousemove", function (event) { self.UpdateRawGameCoords(event, this); });
-        canvas.html.addEventListener("mousedown", function (event) { if (event.button === 0)
-            self.MouseState(true); });
-        canvas.html.addEventListener("mouseup", function (event) { if (event.button === 0)
-            self.MouseState(false); });
+        canvas.canvasJquery.on('mousedown touchstart', function () { self.MouseState(true); });
+        canvas.canvasJquery.on('mouseup touchend', function () { self.MouseState(false); });
         canvas.html.oncontextmenu = function (event) { return false; };
         return this;
     };

@@ -2,6 +2,7 @@ class CanvasData
 {
 	html: HTMLCanvasElement;
 	center: Vector2;
+	canvasJquery: JQuery<HTMLElement>;
 
 	get ctxSize() { return new Vector2().Init(this.html.clientWidth, this.html.clientHeight); }
 
@@ -15,7 +16,8 @@ class CanvasData
 
 	Init(canvasName: string)
 	{
-		this.html = $("#" + canvasName)[0] as HTMLCanvasElement;
+		this.canvasJquery = $("#" + canvasName);
+		this.html = this.canvasJquery[0] as HTMLCanvasElement;
 		let size = this.ctxSize;
 		this.html.width = size.x;
 		this.html.height = size.y;

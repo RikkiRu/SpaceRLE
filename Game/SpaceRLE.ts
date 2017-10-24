@@ -43,7 +43,8 @@ class GameTS
 		this.canvas = new CanvasData().Init("canvasMain");
 		this.time = (new Date).getTime();
 		this.camera = new CameraData().Init();
-		this.camera.scale = new Vector2().Init(1, 1);
+		let scale = this.canvas.ctxSize.x / 1000;
+		this.camera.scale = new Vector2().Init(scale, scale);
 		this.mouseData = new MouseData().Init(this.canvas, this.camera);
 		this.render = new Render().Init();
 		this.renderUtils = new RenderUtils();

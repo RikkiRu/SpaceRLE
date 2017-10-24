@@ -90,12 +90,20 @@ class ShipMind implements IShipMind
         {
             let dx = targetPos.x - currentPos.x;
             let dy = targetPos.y - currentPos.y;
+
+            if (dx === 0)
+                dx = 0.01;
+
             targetAngle = Math.atan(dy / dx) + gameTS.renderUtils.DegToRad(180);
         }
         else
         {
             let dx = currentPos.x - targetPos.x;
             let dy = currentPos.y - targetPos.y;
+
+            if (dx === 0)
+                dx = 0.01;
+
             targetAngle = Math.atan(dy / dx);
         }
 

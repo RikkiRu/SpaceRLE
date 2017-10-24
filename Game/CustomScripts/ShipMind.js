@@ -58,11 +58,15 @@ var ShipMind = (function () {
         if (currentPos.x > targetPos.x) {
             var dx = targetPos.x - currentPos.x;
             var dy = targetPos.y - currentPos.y;
+            if (dx === 0)
+                dx = 0.01;
             targetAngle = Math.atan(dy / dx) + gameTS.renderUtils.DegToRad(180);
         }
         else {
             var dx = currentPos.x - targetPos.x;
             var dy = currentPos.y - targetPos.y;
+            if (dx === 0)
+                dx = 0.01;
             targetAngle = Math.atan(dy / dx);
         }
         var changeAngle = targetAngle - currentAngle;
