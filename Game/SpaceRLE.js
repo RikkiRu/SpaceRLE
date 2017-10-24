@@ -25,6 +25,7 @@ var GameTS = (function () {
     }
     GameTS.prototype.Start = function () {
         console.log("Start");
+        this.renderObjects = [];
         this.canvas = new CanvasData().Init("canvasMain");
         this.time = (new Date).getTime();
         this.camera = new CameraData().Init();
@@ -38,9 +39,6 @@ var GameTS = (function () {
         this.imageLoader.Add(ImageType.StationBig, "Game/Sprites/tribase-u3-d0.png");
         this.imageLoader.Add(ImageType.Ship1, "Game/Sprites/ship1.png");
         this.imageLoader.Load(function () { gameTS.ResourcesLoaded(); });
-        this.hireController = new HireController();
-        this.shipsManager = new ShipsManager().Init();
-        this.renderObjects = [];
         $("#newGameBtn").on('click touchstart', function () { gameTS.Restart(); });
         $("#hireShip1").on('click touchstart', function () { gameTS.hireController.PrepareToHire(ShipType.Ship1); });
         this.Restart();
@@ -52,6 +50,9 @@ var GameTS = (function () {
     };
     GameTS.prototype.Restart = function () {
         this.renderObjects = [];
+        this.hireController = new HireController();
+        this.shipsManager = new ShipsManager().Init();
+        this.teamManager = new TeamManager();
         this.shipsManager.ships = [];
         var dxSmall = 350;
         var dySmall = 200;

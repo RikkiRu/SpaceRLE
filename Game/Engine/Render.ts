@@ -55,6 +55,10 @@ class Render
         {
             let obj = gameTS.renderObjects[i];
             let objLayer = obj.GetLayer();
+
+            if (objLayer == RenderLayer.None)
+                continue;
+
             let arr = sort.get(objLayer);
 
             if (arr == null)

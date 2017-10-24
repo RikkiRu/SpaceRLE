@@ -36,10 +36,14 @@ class GameTS
 	hireController: HireController;
 	shipsManager: ShipsManager;
 	renderUtils: RenderUtils;
+	teamManager: TeamManager;
 
  	Start()
 	{
 		console.log("Start");
+
+		this.renderObjects = [];
+
 		this.canvas = new CanvasData().Init("canvasMain");
 		this.time = (new Date).getTime();
 		this.camera = new CameraData().Init();
@@ -55,10 +59,6 @@ class GameTS
 		this.imageLoader.Add(ImageType.Ship1, "Game/Sprites/ship1.png");
 		this.imageLoader.Load(function() { gameTS.ResourcesLoaded(); });
 
-		this.hireController = new HireController();
-		this.shipsManager = new ShipsManager().Init();
-
-		this.renderObjects = [];
 		$("#newGameBtn").on('click touchstart', function() { gameTS.Restart(); });
 		$("#hireShip1").on('click touchstart', function() { gameTS.hireController.PrepareToHire(ShipType.Ship1) });
 		this.Restart();
@@ -74,6 +74,11 @@ class GameTS
 	Restart()
 	{
 		this.renderObjects = [];
+
+		this.hireController = new HireController();
+		this.shipsManager = new ShipsManager().Init();
+		this.teamManager = new TeamManager();
+
 		this.shipsManager.ships = [];
 
 		let dxSmall = 350;

@@ -5,12 +5,6 @@ var ShipType;
     ShipType[ShipType["StationSmall"] = 2] = "StationSmall";
     ShipType[ShipType["StationBig"] = 3] = "StationBig";
 })(ShipType || (ShipType = {}));
-var Team;
-(function (Team) {
-    Team[Team["None"] = 0] = "None";
-    Team[Team["Left"] = 1] = "Left";
-    Team[Team["Right"] = 2] = "Right";
-})(Team || (Team = {}));
 var ShipsManager = (function () {
     function ShipsManager() {
     }
@@ -19,22 +13,28 @@ var ShipsManager = (function () {
         var ship1 = new ShipTemplate();
         ship1.shipType = ShipType.Ship1;
         ship1.imageType = ImageType.Ship1;
+        ship1.energyCost = 30;
         this.templates.set(ShipType.Ship1, ship1);
         var stationSmall = new ShipTemplate();
         stationSmall.shipType = ShipType.StationSmall;
         stationSmall.imageType = ImageType.StationSmall;
         stationSmall.isStation = true;
+        stationSmall.attackDist = 300;
+        stationSmall.maxHP = 150;
         this.templates.set(ShipType.StationSmall, stationSmall);
         var stationBig = new ShipTemplate();
         stationBig.shipType = ShipType.StationBig;
         stationBig.imageType = ImageType.StationBig;
         stationBig.isStation = true;
+        stationSmall.attackDist = 300;
+        stationSmall.maxHP = 200;
         this.templates.set(ShipType.StationBig, stationBig);
         this.ships = [];
         return this;
     };
     ShipsManager.prototype.SpawnBullet = function (team, position, angle) {
         var bulletSpeed = 0.3;
+        angle += (Math.random() - 0.5) * 0.3;
         var dx = Math.cos(angle) * bulletSpeed;
         var dy = Math.sin(angle) * bulletSpeed;
         var moveDelta = new Vector2().Init(dx, dy);
@@ -43,8 +43,17 @@ var ShipsManager = (function () {
         gameTS.renderObjects.push(b);
     };
     ShipsManager.prototype.SpawnShip = function (shipType, team, position, angle) {
+        var teamData = gameTS.teamManager.teams.get(team);
+        var template = this.templates.get(shipType);
+        if (!template.isStation && teamData.stations == 0)
+            return;
+        if (teamData.energy < template.energyCost)
+            return;
+        teamData.ChangeEnergy(-template.energyCost);
+        if (template.isStation)
+            teamData.stations++;
         var s = new Ship();
-        s.template = this.templates.get(shipType);
+        s.template = template;
         s.team = team;
         s.position = position;
         s.angle = angle;
@@ -57,6 +66,10 @@ var ShipsManager = (function () {
         for (var i = 0; i < this.ships.length; i++) {
             var o = this.ships[i];
             if (o === obj) {
+                if (o.template.isStation) {
+                    var team = gameTS.teamManager.teams.get(o.team);
+                    team.stations--;
+                }
                 this.ships.splice(i, 1);
                 return;
             }
@@ -88,7 +101,7 @@ var HpText = (function () {
         this.pos = pos;
     };
     HpText.prototype.Update = function (dt) {
-        this.pos.y -= dt * 0.02;
+        this.pos.y -= dt * 0.04;
         this.lifeTime -= dt;
         if (this.lifeTime < 0)
             gameTS.RemoveObject(this);
@@ -99,6 +112,7 @@ var HpText = (function () {
     HpText.prototype.Draw = function (ctx) {
         ctx.beginPath();
         ctx.fillStyle = "#D82D33";
+        ctx.font = "15px Verdana";
         ctx.fillText(this.txt, this.pos.x, this.pos.y);
     };
     return HpText;
@@ -110,8 +124,8 @@ var Bullet = (function () {
         this.team = team;
         this.position = position;
         this.moveDelta = moveDelta;
-        this.damage = 10;
-        this.lifeTime = 700;
+        this.damage = 5;
+        this.lifeTime = 1000;
     };
     Bullet.prototype.Update = function (dt) {
         this.lifeTime -= dt;
@@ -201,12 +215,13 @@ var Targeter = (function () {
 var ShipTemplate = (function () {
     function ShipTemplate() {
         this.isStation = false;
-        this.attackDist = 150;
-        this.maxMoveSpeed = 0.03;
-        this.maxAngleSpeed = 0.0003;
+        this.attackDist = 170;
+        this.maxMoveSpeed = 0.05;
+        this.maxAngleSpeed = 0.001;
         this.targetsUpdateRate = 1000;
-        this.fireCooldown = 400;
+        this.fireCooldown = 300;
         this.maxHP = 100;
+        this.energyCost = 0;
     }
     return ShipTemplate;
 }());

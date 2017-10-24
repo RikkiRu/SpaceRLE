@@ -27,6 +27,11 @@ class HireController
         if (this.hireZone != null)
             gameTS.RemoveObject(this.hireZone);
 
+        let template = gameTS.shipsManager.templates.get(shipType);
+        let team = gameTS.teamManager.teams.get(Team.Left);
+        if (team.energy < template.energyCost)
+            return;
+
         this.hireZone = new HireZone();
         this.hireZone.Init(this.hireZoneRectL);
         gameTS.renderObjects.push(this.hireZone);
@@ -46,7 +51,6 @@ class HireController
                 this.shipPreview = new ShipPreview();
                 this.shipPreview.Init(this.shipType);
                 gameTS.renderObjects.push(this.shipPreview);
-                console.log("create preview");
             }
 
 			return false;
@@ -59,8 +63,8 @@ class HireController
                 gameTS.shipsManager.SpawnShip(
                     this.shipPreview.shipType, Team.Left, gameTS.mouseData.gamePosition, this.shipPreview.shipAngle);
 
-                gameTS.shipsManager.SpawnShip(
-                    this.shipPreview.shipType, Team.Right, this.hireZoneRectR.GetRandomPoint(), gameTS.renderUtils.DegToRad(180));
+                //gameTS.shipsManager.SpawnShip(
+                //    this.shipPreview.shipType, Team.Right, this.hireZoneRectR.GetRandomPoint(), gameTS.renderUtils.DegToRad(180));
             }
 
             gameTS.RemoveObject(this.shipPreview);
@@ -90,9 +94,6 @@ class HireZone implements IRenderObject
 
     Draw(ctx: CanvasRenderingContext2D): void
     {
-        console.log("drw");
-
-
         ctx.fillStyle = "#251F42";
         ctx.fillRect(this.rect.leftTop.x, this.rect.leftTop.y, this.rect.size.x, this.rect.size.y);
     }

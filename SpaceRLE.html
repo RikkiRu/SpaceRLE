@@ -27,6 +27,7 @@
 		<script type="text/javascript" src="Game/CustomScripts/ShipsManager.js"></script>
 		<script type="text/javascript" src="Game/CustomScripts/StationMind.js"></script>
 		<script type="text/javascript" src="Game/CustomScripts/ShipMind.js"></script>
+		<script type="text/javascript" src="Game/CustomScripts/TeamManager.js"></script>
 
 		<link rel="stylesheet" href="SpaceRLE.css" type="text/css">
 
@@ -34,9 +35,19 @@
 
 	<body style="width: 100%; height: 100%; overflow: hidden; padding: 0; margin: 0; user-select: none;">
 		<canvas id="canvasMain" style="background-color: #0C062D; width: 100%; height: 100%;"></canvas>
+
+		<div id="imgEnergy"></div>
+		<div id="energyLabel"> 5 / 10 </div>
+
 		<div id="newGameBtn" class="newGameBtn"> NEW GAME v1 </div>
 
-		<div id="hireShip1" class="hireBtn hireShip1"></div>
+		<div id="hireShip1" class="hireBtn hireShip1">
+			<div class="hireBtnTitle">
+				<div class="hireBtnCost"></div>
+				<div class="hireBtnCostLabel">30</div>
+			</div>
+
+		</div>
 
 	</body>
 

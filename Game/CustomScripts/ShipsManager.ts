@@ -6,13 +6,6 @@ enum ShipType
     StationBig,
 }
 
-enum Team
-{
-    None,
-    Left,
-    Right,
-}
-
 class ShipsManager
 {
     templates: Map<ShipType, ShipTemplate>;
@@ -25,18 +18,23 @@ class ShipsManager
         let ship1 = new ShipTemplate();
         ship1.shipType = ShipType.Ship1;
         ship1.imageType = ImageType.Ship1;
+        ship1.energyCost = 30;
         this.templates.set(ShipType.Ship1, ship1);
 
         let stationSmall = new ShipTemplate();
         stationSmall.shipType = ShipType.StationSmall;
         stationSmall.imageType = ImageType.StationSmall;
         stationSmall.isStation = true;
+        stationSmall.attackDist = 300;
+        stationSmall.maxHP = 150;
         this.templates.set(ShipType.StationSmall, stationSmall);
 
         let stationBig = new ShipTemplate();
         stationBig.shipType = ShipType.StationBig;
         stationBig.imageType = ImageType.StationBig;
         stationBig.isStation = true;
+        stationSmall.attackDist = 300;
+        stationSmall.maxHP = 200;
         this.templates.set(ShipType.StationBig, stationBig);
 
         this.ships = [];
@@ -47,6 +45,9 @@ class ShipsManager
     SpawnBullet(team: Team, position: Vector2, angle: number)
     {
         let bulletSpeed = 0.3;
+
+        angle += (Math.random() - 0.5) * 0.3;
+
         let dx = Math.cos(angle) * bulletSpeed;
         let dy = Math.sin(angle) * bulletSpeed;
         let moveDelta = new Vector2().Init(dx, dy);
@@ -58,8 +59,22 @@ class ShipsManager
 
     SpawnShip(shipType: ShipType, team: Team, position: Vector2, angle: number)
     {
+        let teamData = gameTS.teamManager.teams.get(team);
+        let template = this.templates.get(shipType);
+
+        if (!template.isStation && teamData.stations == 0)
+             return;
+
+        if (teamData.energy < template.energyCost)
+            return;
+
+        teamData.ChangeEnergy(-template.energyCost);
+
+        if (template.isStation)
+            teamData.stations++;
+
         let s = new Ship();
-        s.template = this.templates.get(shipType);
+        s.template = template;
         s.team = team;
         s.position = position;
         s.angle = angle;
@@ -76,6 +91,12 @@ class ShipsManager
 			let o = this.ships[i];
 			if (o === obj)
 			{
+                if (o.template.isStation)
+                {
+                    let team = gameTS.teamManager.teams.get(o.team);
+                    team.stations--;
+                }
+
 				this.ships.splice(i, 1);
 				return;
 			}
@@ -118,7 +139,7 @@ class HpText implements IRenderObject, IUpdatable
 
     Update(dt: number)
     {
-        this.pos.y -= dt * 0.02;
+        this.pos.y -= dt * 0.04;
 
         this.lifeTime -= dt;
         if (this.lifeTime < 0)
@@ -134,6 +155,7 @@ class HpText implements IRenderObject, IUpdatable
     {
         ctx.beginPath();
         ctx.fillStyle = "#D82D33";
+        ctx.font="15px Verdana";
         ctx.fillText(this.txt, this.pos.x, this.pos.y);
     }
 }
@@ -151,8 +173,8 @@ class Bullet implements IRenderObject, IUpdatable
         this.team = team;
         this.position = position;
         this.moveDelta = moveDelta;
-        this.damage = 10;
-        this.lifeTime = 700;
+        this.damage = 5;
+        this.lifeTime = 1000;
     }
 
     Update(dt: number)
@@ -297,15 +319,17 @@ class ShipTemplate
     targetsUpdateRate: number;
     fireCooldown: number;
     maxHP: number;
+    energyCost: number;
 
     constructor()
     {
         this.isStation = false;
-        this.attackDist = 150;
-        this.maxMoveSpeed = 0.03;
-        this.maxAngleSpeed = 0.0003;
+        this.attackDist = 170;
+        this.maxMoveSpeed = 0.05;
+        this.maxAngleSpeed = 0.001;
         this.targetsUpdateRate = 1000;
-        this.fireCooldown = 400;
+        this.fireCooldown = 300;
         this.maxHP = 100;
+        this.energyCost = 0;
     }
 }

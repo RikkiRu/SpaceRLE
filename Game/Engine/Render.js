@@ -29,6 +29,8 @@ var Render = (function () {
         for (var i_2 in gameTS.renderObjects) {
             var obj = gameTS.renderObjects[i_2];
             var objLayer = obj.GetLayer();
+            if (objLayer == RenderLayer.None)
+                continue;
             var arr = sort.get(objLayer);
             if (arr == null) {
                 arr = [];
