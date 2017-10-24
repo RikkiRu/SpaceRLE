@@ -58,8 +58,8 @@ class GameTS
 		this.shipsManager = new ShipsManager().Init();
 
 		this.renderObjects = [];
-		$("#newGameBtn")[0].onclick = function() { gameTS.Restart(); };
-		$("#hireShip1")[0].onclick = function() { gameTS.hireController.PrepareToHire(ShipType.Ship1) };
+		$("#newGameBtn").on('click touchstart', function() { gameTS.Restart(); });
+		$("#hireShip1").on('click touchstart', function() { gameTS.hireController.PrepareToHire(ShipType.Ship1) });
 		this.Restart();
 	}
 
