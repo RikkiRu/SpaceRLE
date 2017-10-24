@@ -10,8 +10,16 @@ var MouseData = (function () {
         canvas.html.addEventListener("mousemove", function (event) { self.UpdateRawGameCoords(event, this); });
         canvas.canvasJquery.on('mousedown touchstart', function () { self.MouseState(true); });
         canvas.canvasJquery.on('mouseup touchend', function () { self.MouseState(false); });
+        canvas.html.addEventListener("touchmove", function (event) { self.UpdateRawGameCoordsE(event, this); });
         canvas.html.oncontextmenu = function (event) { return false; };
         return this;
+    };
+    MouseData.prototype.UpdateRawGameCoordsE = function (e, context) {
+        if (e.touches.length < 1)
+            return;
+        var coords = context.getBoundingClientRect();
+        this.rawPosition = new Vector2().Init(e.touches[0].clientX - coords.left, e.touches[0].clientY - coords.top);
+        this.UpdateGameCoords();
     };
     MouseData.prototype.UpdateRawGameCoords = function (e, context) {
         var coords = context.getBoundingClientRect();
