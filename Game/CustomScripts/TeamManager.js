@@ -38,9 +38,12 @@ var TeamAI = (function () {
             this.wantShips.forEach(function (count, shipType) {
                 var posInZone = gameTS.hireController.hireZoneRectR.GetRandomPoint();
                 for (var i = 0; i < count; i++) {
-                    var pos = posInZone.Clone();
-                    pos.x += gameTS.renderUtils.Random(-30, 30);
-                    pos.y += gameTS.renderUtils.Random(-30, 30);
+                    var pos = null;
+                    do {
+                        pos = posInZone.Clone();
+                        pos.x += gameTS.renderUtils.Random(-30, 30);
+                        pos.y += gameTS.renderUtils.Random(-30, 30);
+                    } while (!gameTS.hireController.hireZoneRectR.IsInside(pos));
                     gameTS.shipsManager.SpawnShip(shipType, _this.owner.team, pos, gameTS.renderUtils.DegToRad(180));
                 }
             });

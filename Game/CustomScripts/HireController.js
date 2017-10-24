@@ -36,8 +36,6 @@ var HireController = (function () {
         if (this.shipPreview != null) {
             if (this.hireZoneRectL.IsInside(gameTS.mouseData.gamePosition)) {
                 gameTS.shipsManager.SpawnShip(this.shipPreview.shipType, Team.Left, gameTS.mouseData.gamePosition, this.shipPreview.shipAngle);
-                //gameTS.shipsManager.SpawnShip(
-                //    this.shipPreview.shipType, Team.Right, this.hireZoneRectR.GetRandomPoint(), gameTS.renderUtils.DegToRad(180));
             }
             gameTS.RemoveObject(this.shipPreview);
             this.shipPreview = null;

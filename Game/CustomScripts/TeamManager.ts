@@ -61,9 +61,16 @@ class TeamAI implements IUpdatable
 
                 for (let i=0; i<count; i++)
                 {
-                    let pos = posInZone.Clone();
-                    pos.x += gameTS.renderUtils.Random(-30, 30);
-                    pos.y += gameTS.renderUtils.Random(-30, 30);
+                    let pos: Vector2 = null;
+
+                    do
+                    {
+                        pos = posInZone.Clone();
+                        pos.x += gameTS.renderUtils.Random(-30, 30);
+                        pos.y += gameTS.renderUtils.Random(-30, 30);
+                    }
+                    while(!gameTS.hireController.hireZoneRectR.IsInside(pos))
+
                     gameTS.shipsManager.SpawnShip(shipType, this.owner.team, pos, gameTS.renderUtils.DegToRad(180));
                 }
             });
