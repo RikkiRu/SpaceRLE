@@ -42,12 +42,14 @@ class TeamAI implements IUpdatable
     {
         this.wantShips = new Map();
 
-        let n = gameTS.renderUtils.Random(0, 2);
+        let n = gameTS.renderUtils.Random(0, 3);
 
         if (n == 0)
-            this.wantShips.set(ShipType.Ship1, gameTS.renderUtils.Random(1, 4));
-        else
-            this.wantShips.set(ShipType.Ship4, gameTS.renderUtils.Random(2, 5));
+            this.wantShips.set(ShipType.Ship1, gameTS.renderUtils.Random(1, 3));
+        else if(n == 1)
+            this.wantShips.set(ShipType.Ship4, gameTS.renderUtils.Random(1, 4));
+        else if(n == 2)
+            this.wantShips.set(ShipType.Ship5, 1);
     }
 
     Update(dt: number)

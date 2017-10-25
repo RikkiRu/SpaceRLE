@@ -36,7 +36,7 @@ var ShipMind = (function () {
         if (this.owner.position.DistTo(target.position) > this.owner.template.attackDist)
             return;
         this.fireCooldown += this.owner.template.fireCooldown;
-        gameTS.shipsManager.SpawnBullet(this.owner.team, this.owner.position, this.owner.angle);
+        gameTS.shipsManager.SpawnBullet(this.owner.team, this.owner.position, this.owner.angle, this.owner.template.bulletsDamage, this.owner.template.bulletSize);
     };
     ShipMind.prototype.FlyTo = function (target, dt) {
         if (target == null)

@@ -56,7 +56,7 @@ class ShipMind implements IShipMind
             return;
 
         this.fireCooldown += this.owner.template.fireCooldown;
-        gameTS.shipsManager.SpawnBullet(this.owner.team, this.owner.position, this.owner.angle);
+        gameTS.shipsManager.SpawnBullet(this.owner.team, this.owner.position, this.owner.angle, this.owner.template.bulletsDamage, this.owner.template.bulletSize);
     }
 
     FlyTo(target: Ship, dt: number)

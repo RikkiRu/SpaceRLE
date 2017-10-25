@@ -11,7 +11,7 @@ var StationMind = (function () {
     };
     StationMind.prototype.Update = function (dt) {
         this.targetUpdateCooldown -= dt;
-        if (this.target == null || this.targetUpdateCooldown < 0) {
+        if (this.target == null || this.target.isDead || this.targetUpdateCooldown < 0) {
             this.target = this.targeter.SearchTarget();
             this.targetUpdateCooldown = this.owner.template.targetsUpdateRate;
         }
@@ -43,7 +43,7 @@ var StationMind = (function () {
             targetAngle = Math.atan(dy / dx);
         }
         this.fireCooldown += this.owner.template.fireCooldown;
-        gameTS.shipsManager.SpawnBullet(this.owner.team, this.owner.position, targetAngle);
+        gameTS.shipsManager.SpawnBullet(this.owner.team, this.owner.position, targetAngle, this.owner.template.bulletsDamage, this.owner.template.bulletSize);
     };
     return StationMind;
 }());

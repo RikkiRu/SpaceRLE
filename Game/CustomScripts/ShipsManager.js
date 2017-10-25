@@ -5,51 +5,72 @@ var ShipType;
     ShipType[ShipType["StationSmall"] = 2] = "StationSmall";
     ShipType[ShipType["StationBig"] = 3] = "StationBig";
     ShipType[ShipType["Ship4"] = 4] = "Ship4";
+    ShipType[ShipType["Ship5"] = 5] = "Ship5";
 })(ShipType || (ShipType = {}));
 var ShipsManager = (function () {
     function ShipsManager() {
     }
     ShipsManager.prototype.Init = function () {
         this.templates = new Map();
+        // Medium
         var ship1 = new ShipTemplate();
         ship1.shipType = ShipType.Ship1;
         ship1.imageType = ImageType.Ship1;
         ship1.energyCost = 30;
         this.templates.set(ShipType.Ship1, ship1);
+        // Small
         var ship4 = new ShipTemplate();
         ship4.shipType = ShipType.Ship4;
         ship4.imageType = ImageType.Ship4;
         ship4.energyCost = 15;
-        ship4.maxMoveSpeed = 0.1;
+        ship4.maxMoveSpeed = 0.05;
         ship4.maxAngleSpeed = 0.002;
         ship4.targetsUpdateRate = 500;
-        ship4.maxHP = 15;
+        ship4.maxHP = 10;
+        ship4.attackDist = 100;
+        ship4.fireCooldown = 150;
+        ship4.bulletsDamage = 10;
+        ship4.bulletSize = 1;
         this.templates.set(ShipType.Ship4, ship4);
+        // Big
+        var ship5 = new ShipTemplate();
+        ship5.shipType = ShipType.Ship5;
+        ship5.imageType = ImageType.Ship5;
+        ship5.energyCost = 50;
+        ship5.maxMoveSpeed = 0.015;
+        ship5.maxAngleSpeed = 0.00015;
+        ship5.targetsUpdateRate = 2000;
+        ship5.maxHP = 200;
+        ship5.attackDist = 300;
+        ship5.bulletsDamage = 20;
+        ship5.bulletSize = 4;
+        ship5.fireCooldown = 600;
+        this.templates.set(ShipType.Ship5, ship5);
         var stationSmall = new ShipTemplate();
         stationSmall.shipType = ShipType.StationSmall;
         stationSmall.imageType = ImageType.StationSmall;
         stationSmall.isStation = true;
-        stationSmall.attackDist = 300;
+        stationSmall.attackDist = 320;
         stationSmall.maxHP = 150;
         this.templates.set(ShipType.StationSmall, stationSmall);
         var stationBig = new ShipTemplate();
         stationBig.shipType = ShipType.StationBig;
         stationBig.imageType = ImageType.StationBig;
         stationBig.isStation = true;
-        stationSmall.attackDist = 300;
+        stationSmall.attackDist = 320;
         stationSmall.maxHP = 200;
         this.templates.set(ShipType.StationBig, stationBig);
         this.ships = [];
         return this;
     };
-    ShipsManager.prototype.SpawnBullet = function (team, position, angle) {
+    ShipsManager.prototype.SpawnBullet = function (team, position, angle, damage, bulletSize) {
         var bulletSpeed = 0.3;
         angle += (Math.random() - 0.5) * 0.3;
         var dx = Math.cos(angle) * bulletSpeed;
         var dy = Math.sin(angle) * bulletSpeed;
         var moveDelta = new Vector2().Init(dx, dy);
         var b = new Bullet();
-        b.Init(team, position.Clone(), moveDelta);
+        b.Init(team, position.Clone(), moveDelta, damage, bulletSize);
         gameTS.renderObjects.push(b);
     };
     ShipsManager.prototype.SpawnShip = function (shipType, team, position, angle) {
@@ -128,49 +149,6 @@ var HpText = (function () {
     };
     return HpText;
 }());
-var Bullet = (function () {
-    function Bullet() {
-    }
-    Bullet.prototype.Init = function (team, position, moveDelta) {
-        this.team = team;
-        this.position = position;
-        this.moveDelta = moveDelta;
-        this.damage = 5;
-        this.lifeTime = 1000;
-    };
-    Bullet.prototype.Update = function (dt) {
-        this.lifeTime -= dt;
-        if (this.lifeTime < 0) {
-            gameTS.RemoveObject(this);
-            return;
-        }
-        this.position.x += this.moveDelta.x * dt;
-        this.position.y += this.moveDelta.y * dt;
-        if (!gameTS.hireController.battleRect.IsInside(this.position)) {
-            gameTS.RemoveObject(this);
-            return;
-        }
-        for (var i in gameTS.shipsManager.ships) {
-            var ship = gameTS.shipsManager.ships[i];
-            if (ship.team === this.team || ship.team === Team.None)
-                continue;
-            if (this.position.DistTo(ship.position) < 20) {
-                gameTS.RemoveObject(this);
-                gameTS.shipsManager.DoDamage(ship, this.damage);
-            }
-        }
-    };
-    Bullet.prototype.GetLayer = function () {
-        return RenderLayer.Bullets;
-    };
-    Bullet.prototype.Draw = function (ctx) {
-        ctx.beginPath();
-        ctx.fillStyle = "#D0DB36";
-        ctx.ellipse(this.position.x, this.position.y, 2, 2, 0, 0, Math.PI * 2, false);
-        ctx.fill();
-    };
-    return Bullet;
-}());
 var Ship = (function () {
     function Ship() {
     }
@@ -234,6 +212,8 @@ var ShipTemplate = (function () {
         this.fireCooldown = 300;
         this.maxHP = 100;
         this.energyCost = 0;
+        this.bulletsDamage = 5;
+        this.bulletSize = 2;
     }
     return ShipTemplate;
 }());

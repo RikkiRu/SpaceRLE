@@ -5,6 +5,7 @@ enum ShipType
     StationSmall,
     StationBig,
     Ship4,
+    Ship5,
 }
 
 class ShipsManager
@@ -16,27 +17,48 @@ class ShipsManager
     {
         this.templates = new Map();
 
+        // Medium
         let ship1 = new ShipTemplate();
         ship1.shipType = ShipType.Ship1;
         ship1.imageType = ImageType.Ship1;
         ship1.energyCost = 30;
         this.templates.set(ShipType.Ship1, ship1);
 
+        // Small
         let ship4 = new ShipTemplate();
         ship4.shipType = ShipType.Ship4;
         ship4.imageType = ImageType.Ship4;
         ship4.energyCost = 15;
-        ship4.maxMoveSpeed = 0.1;
+        ship4.maxMoveSpeed = 0.05;
         ship4.maxAngleSpeed = 0.002;
         ship4.targetsUpdateRate = 500;
-        ship4.maxHP = 15;
+        ship4.maxHP = 10;
+        ship4.attackDist = 100;
+        ship4.fireCooldown = 150;
+        ship4.bulletsDamage = 10;
+        ship4.bulletSize = 1;
         this.templates.set(ShipType.Ship4, ship4);
+
+        // Big
+        let ship5 = new ShipTemplate();
+        ship5.shipType = ShipType.Ship5;
+        ship5.imageType = ImageType.Ship5;
+        ship5.energyCost = 50;
+        ship5.maxMoveSpeed = 0.015;
+        ship5.maxAngleSpeed = 0.00015;
+        ship5.targetsUpdateRate = 2000;
+        ship5.maxHP = 200;
+        ship5.attackDist = 300;
+        ship5.bulletsDamage = 20;
+        ship5.bulletSize = 4;
+        ship5.fireCooldown = 600;
+        this.templates.set(ShipType.Ship5, ship5);
 
         let stationSmall = new ShipTemplate();
         stationSmall.shipType = ShipType.StationSmall;
         stationSmall.imageType = ImageType.StationSmall;
         stationSmall.isStation = true;
-        stationSmall.attackDist = 300;
+        stationSmall.attackDist = 320;
         stationSmall.maxHP = 150;
         this.templates.set(ShipType.StationSmall, stationSmall);
 
@@ -44,7 +66,7 @@ class ShipsManager
         stationBig.shipType = ShipType.StationBig;
         stationBig.imageType = ImageType.StationBig;
         stationBig.isStation = true;
-        stationSmall.attackDist = 300;
+        stationSmall.attackDist = 320;
         stationSmall.maxHP = 200;
         this.templates.set(ShipType.StationBig, stationBig);
 
@@ -53,7 +75,7 @@ class ShipsManager
         return this;
     }
 
-    SpawnBullet(team: Team, position: Vector2, angle: number)
+    SpawnBullet(team: Team, position: Vector2, angle: number, damage: number, bulletSize: number)
     {
         let bulletSpeed = 0.3;
 
@@ -64,7 +86,7 @@ class ShipsManager
         let moveDelta = new Vector2().Init(dx, dy);
 
         let b = new Bullet();
-        b.Init(team, position.Clone(), moveDelta);
+        b.Init(team, position.Clone(), moveDelta, damage, bulletSize);
         gameTS.renderObjects.push(b);
     }
 
@@ -172,71 +194,6 @@ class HpText implements IRenderObject, IUpdatable
     }
 }
 
-class Bullet implements IRenderObject, IUpdatable
-{
-    team: Team;
-    position: Vector2;
-    moveDelta: Vector2;
-    damage: number;
-    lifeTime: number;
-
-    Init(team: Team, position: Vector2, moveDelta: Vector2)
-    {
-        this.team = team;
-        this.position = position;
-        this.moveDelta = moveDelta;
-        this.damage = 5;
-        this.lifeTime = 1000;
-    }
-
-    Update(dt: number)
-    {
-        this.lifeTime -= dt;
-
-        if (this.lifeTime < 0)
-        {
-            gameTS.RemoveObject(this);
-            return;
-        }
-
-        this.position.x += this.moveDelta.x * dt;
-        this.position.y += this.moveDelta.y * dt;
-
-        if (!gameTS.hireController.battleRect.IsInside(this.position))
-        {
-            gameTS.RemoveObject(this);
-            return;
-        }
-
-        for (let i in gameTS.shipsManager.ships)
-        {
-            let ship = gameTS.shipsManager.ships[i];
-
-            if (ship.team === this.team || ship.team === Team.None)
-                continue;
-
-            if (this.position.DistTo(ship.position) < 20)
-            {
-                gameTS.RemoveObject(this);
-                gameTS.shipsManager.DoDamage(ship, this.damage);
-            }
-        }
-    }
-
-    GetLayer(): RenderLayer
-    {
-        return RenderLayer.Bullets;
-    }
-
-    Draw(ctx: CanvasRenderingContext2D): void
-    {
-       ctx.beginPath();
-       ctx.fillStyle = "#D0DB36";
-       ctx.ellipse(this.position.x, this.position.y, 2, 2, 0, 0, Math.PI * 2, false);
-       ctx.fill();
-    }
-}
-
 class Ship implements IRenderObject, IUpdatable
 {
     template: ShipTemplate;
@@ -335,6 +292,8 @@ class ShipTemplate
     fireCooldown: number;
     maxHP: number;
     energyCost: number;
+    bulletsDamage: number;
+    bulletSize: number;
 
     constructor()
     {
@@ -346,5 +305,7 @@ class ShipTemplate
         this.fireCooldown = 300;
         this.maxHP = 100;
         this.energyCost = 0;
+        this.bulletsDamage = 5;
+        this.bulletSize = 2;
     }
 }

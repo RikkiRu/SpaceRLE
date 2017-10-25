@@ -26,11 +26,13 @@ var TeamAI = (function () {
     }
     TeamAI.prototype.GenerateWantShips = function () {
         this.wantShips = new Map();
-        var n = gameTS.renderUtils.Random(0, 2);
+        var n = gameTS.renderUtils.Random(0, 3);
         if (n == 0)
-            this.wantShips.set(ShipType.Ship1, gameTS.renderUtils.Random(1, 4));
-        else
-            this.wantShips.set(ShipType.Ship4, gameTS.renderUtils.Random(2, 5));
+            this.wantShips.set(ShipType.Ship1, gameTS.renderUtils.Random(1, 3));
+        else if (n == 1)
+            this.wantShips.set(ShipType.Ship4, gameTS.renderUtils.Random(1, 4));
+        else if (n == 2)
+            this.wantShips.set(ShipType.Ship5, 1);
     };
     TeamAI.prototype.Update = function (dt) {
         var _this = this;
