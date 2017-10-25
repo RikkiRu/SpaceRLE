@@ -54,16 +54,14 @@ var TeamAI = (function () {
 }());
 var TeamData = (function () {
     function TeamData() {
-        this.energy = 50;
+        this.energy = 0;
         this.maxEnergy = 100;
         this.cooldownEnergyMax = 700;
         this.cooldownEnergyCurrent = this.cooldownEnergyMax;
         this.ai = null;
         this.stations = 0;
         gameTS.renderObjects.push(this);
-        if (this.team == Team.Left) {
-            $("#energyLabel").html(this.energy + " / " + this.maxEnergy);
-        }
+        this.ChangeEnergy(50);
     }
     TeamData.prototype.ChangeEnergy = function (delta) {
         if (delta == 0)
@@ -73,6 +71,21 @@ var TeamData = (function () {
             this.energy = this.maxEnergy;
         if (this.team == Team.Left) {
             $("#energyLabel").html(this.energy + " / " + this.maxEnergy);
+            var values = Object.keys(ShipType).map(function (k) { return ShipType[k]; }).filter(function (v) { return typeof v === "string"; });
+            for (var i in values) {
+                var t = ShipType[values[i]];
+                if (t == ShipType.None)
+                    continue;
+                var template = gameTS.shipsManager.templates.get(t);
+                if (template.isStation)
+                    continue;
+                var opacity = this.energy >= template.energyCost ? 1 : 0.5;
+                $(GameTS.HireBtnPrefix + values[i]).fadeTo(0, opacity);
+                var restoreHeight = 100;
+                if (this.energy < template.energyCost)
+                    restoreHeight = this.energy / template.energyCost * 100;
+                $("#hireBtnRestore_" + values[i])[0].style.height = 100 - restoreHeight + "%";
+            }
         }
     };
     TeamData.prototype.Update = function (dt) {

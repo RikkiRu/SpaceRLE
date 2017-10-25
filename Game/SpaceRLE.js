@@ -40,8 +40,26 @@ var GameTS = (function () {
         this.imageLoader.Add(ImageType.Ship1, "Game/Sprites/ship1.png");
         this.imageLoader.Load(function () { gameTS.ResourcesLoaded(); });
         $("#newGameBtn").on('click touchstart', function () { gameTS.Restart(); });
-        $("#hireShip1").on('click touchstart', function () { gameTS.hireController.PrepareToHire(ShipType.Ship1); });
         this.Restart();
+        this.SubscribeButtons();
+    };
+    GameTS.prototype.SubscribeButtons = function () {
+        $("#hireShip1").on('click touchstart', function () { gameTS.hireController.PrepareToHire(ShipType.Ship1); });
+        var values = Object.keys(ShipType).map(function (k) { return ShipType[k]; }).filter(function (v) { return typeof v === "string"; });
+        var _loop_1 = function () {
+            var t = ShipType[values[i]];
+            if (t == ShipType.None)
+                return "continue";
+            var template = this_1.shipsManager.templates.get(t);
+            if (template.isStation)
+                return "continue";
+            $(GameTS.HireBtnPrefix + values[i]).on('click touchstart', function () { gameTS.hireController.PrepareToHire(t); });
+            $("#hireCost_" + values[i]).html(template.energyCost.toString());
+        };
+        var this_1 = this;
+        for (var i in values) {
+            _loop_1();
+        }
     };
     GameTS.prototype.ResourcesLoaded = function () {
         console.log("ResourcesLoaded");
@@ -81,5 +99,6 @@ var GameTS = (function () {
     };
     return GameTS;
 }());
+GameTS.HireBtnPrefix = "#hireBtn_";
 var gameTS;
 //# sourceMappingURL=SpaceRLE.js.map

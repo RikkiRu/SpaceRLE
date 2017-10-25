@@ -26,6 +26,8 @@ enum RenderLayer
 
 class GameTS
 {
+	static readonly HireBtnPrefix = "#hireBtn_";
+
 	canvas: CanvasData;
 	time = 0;
 	camera: CameraData;
@@ -60,8 +62,32 @@ class GameTS
 		this.imageLoader.Load(function() { gameTS.ResourcesLoaded(); });
 
 		$("#newGameBtn").on('click touchstart', function() { gameTS.Restart(); });
-		$("#hireShip1").on('click touchstart', function() { gameTS.hireController.PrepareToHire(ShipType.Ship1) });
+
 		this.Restart();
+		this.SubscribeButtons();
+	}
+
+	SubscribeButtons()
+	{
+		$("#hireShip1").on('click touchstart', function() { gameTS.hireController.PrepareToHire(ShipType.Ship1) });
+
+		const values = Object.keys(ShipType).map(k => ShipType[k]).filter(v => typeof v === "string") as string[];
+
+        for (var i in values)
+        {
+			let t: ShipType = ShipType[values[i]]
+
+			if (t == ShipType.None)
+				continue;
+
+			let template = this.shipsManager.templates.get(t);
+
+			if (template.isStation)
+				continue;
+
+			$(GameTS.HireBtnPrefix + values[i]).on('click touchstart', function() { gameTS.hireController.PrepareToHire(t) });
+			$("#hireCost_" + values[i]).html(template.energyCost.toString());
+		}
 	}
 
 	ResourcesLoaded()

@@ -92,7 +92,7 @@ class TeamData implements IUpdatable, IRenderObject
 
     constructor()
     {
-        this.energy = 50;
+        this.energy = 0;
         this.maxEnergy = 100;
         this.cooldownEnergyMax = 700;
         this.cooldownEnergyCurrent = this.cooldownEnergyMax;
@@ -101,10 +101,7 @@ class TeamData implements IUpdatable, IRenderObject
 
         gameTS.renderObjects.push(this);
 
-        if (this.team == Team.Left)
-        {
-           $("#energyLabel").html(this.energy + " / " + this.maxEnergy);
-        }
+        this.ChangeEnergy(50);
     }
 
     ChangeEnergy(delta)
@@ -119,6 +116,32 @@ class TeamData implements IUpdatable, IRenderObject
         if (this.team == Team.Left)
         {
            $("#energyLabel").html(this.energy + " / " + this.maxEnergy);
+
+           const values = Object.keys(ShipType).map(k => ShipType[k]).filter(v => typeof v === "string") as string[];
+
+            for (var i in values)
+            {
+                let t: ShipType = ShipType[values[i]]
+
+                if (t == ShipType.None)
+                    continue;
+
+                let template = gameTS.shipsManager.templates.get(t);
+
+                if (template.isStation)
+                    continue;
+
+                let opacity = this.energy >= template.energyCost ? 1 : 0.5;
+
+                $(GameTS.HireBtnPrefix + values[i]).fadeTo(0, opacity);
+
+                let restoreHeight = 100;
+
+                if (this.energy < template.energyCost)
+                    restoreHeight = this.energy / template.energyCost * 100;
+
+                $("#hireBtnRestore_" + values[i])[0].style.height = 100 - restoreHeight + "%";
+            }
         }
     }
 
