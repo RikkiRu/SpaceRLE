@@ -4,6 +4,7 @@ var ShipType;
     ShipType[ShipType["Ship1"] = 1] = "Ship1";
     ShipType[ShipType["StationSmall"] = 2] = "StationSmall";
     ShipType[ShipType["StationBig"] = 3] = "StationBig";
+    ShipType[ShipType["Ship4"] = 4] = "Ship4";
 })(ShipType || (ShipType = {}));
 var ShipsManager = (function () {
     function ShipsManager() {
@@ -15,6 +16,15 @@ var ShipsManager = (function () {
         ship1.imageType = ImageType.Ship1;
         ship1.energyCost = 30;
         this.templates.set(ShipType.Ship1, ship1);
+        var ship4 = new ShipTemplate();
+        ship4.shipType = ShipType.Ship4;
+        ship4.imageType = ImageType.Ship4;
+        ship4.energyCost = 15;
+        ship4.maxMoveSpeed = 0.1;
+        ship4.maxAngleSpeed = 0.002;
+        ship4.targetsUpdateRate = 500;
+        ship4.maxHP = 15;
+        this.templates.set(ShipType.Ship4, ship4);
         var stationSmall = new ShipTemplate();
         stationSmall.shipType = ShipType.StationSmall;
         stationSmall.imageType = ImageType.StationSmall;
@@ -81,6 +91,7 @@ var ShipsManager = (function () {
         else
             target.hp -= damage;
         if (target.hp <= 0) {
+            target.isDead = true;
             gameTS.RemoveObject(target);
             this.RemoveObject(target);
         }
@@ -164,6 +175,7 @@ var Ship = (function () {
     function Ship() {
     }
     Ship.prototype.Init = function () {
+        this.isDead = false;
         if (this.template.isStation)
             this.mind = new StationMind();
         else

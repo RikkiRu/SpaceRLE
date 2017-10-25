@@ -12,6 +12,7 @@ enum ImageType
     StationSmall,
 	StationBig,
 	Ship1,
+	Ship4,
 }
 
 enum RenderLayer
@@ -59,6 +60,7 @@ class GameTS
 		this.imageLoader.Add(ImageType.StationSmall, "Game/Sprites/tribase-u1-d0.png");
 		this.imageLoader.Add(ImageType.StationBig, "Game/Sprites/tribase-u3-d0.png");
 		this.imageLoader.Add(ImageType.Ship1, "Game/Sprites/ship1.png");
+		this.imageLoader.Add(ImageType.Ship4, "Game/Sprites/ship4.png");
 		this.imageLoader.Load(function() { gameTS.ResourcesLoaded(); });
 
 		$("#newGameBtn").on('click touchstart', function() { gameTS.Restart(); });

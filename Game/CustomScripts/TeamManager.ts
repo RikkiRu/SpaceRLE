@@ -41,11 +41,20 @@ class TeamAI implements IUpdatable
     GenerateWantShips()
     {
         this.wantShips = new Map();
-        this.wantShips.set(ShipType.Ship1, gameTS.renderUtils.Random(1, 4));
+
+        let n = gameTS.renderUtils.Random(0, 2);
+
+        if (n == 0)
+            this.wantShips.set(ShipType.Ship1, gameTS.renderUtils.Random(1, 4));
+        else
+            this.wantShips.set(ShipType.Ship4, gameTS.renderUtils.Random(2, 5));
     }
 
     Update(dt: number)
     {
+        if (gameTS.teamManager.teams.get(Team.Left).stations == 0)
+            return;
+
         let needEnergy = 0;
 
         this.wantShips.forEach((count: number, shipType: ShipType) =>

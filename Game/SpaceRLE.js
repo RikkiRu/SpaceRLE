@@ -9,6 +9,7 @@ var ImageType;
     ImageType[ImageType["StationSmall"] = 1] = "StationSmall";
     ImageType[ImageType["StationBig"] = 2] = "StationBig";
     ImageType[ImageType["Ship1"] = 3] = "Ship1";
+    ImageType[ImageType["Ship4"] = 4] = "Ship4";
 })(ImageType || (ImageType = {}));
 var RenderLayer;
 (function (RenderLayer) {
@@ -38,6 +39,7 @@ var GameTS = (function () {
         this.imageLoader.Add(ImageType.StationSmall, "Game/Sprites/tribase-u1-d0.png");
         this.imageLoader.Add(ImageType.StationBig, "Game/Sprites/tribase-u3-d0.png");
         this.imageLoader.Add(ImageType.Ship1, "Game/Sprites/ship1.png");
+        this.imageLoader.Add(ImageType.Ship4, "Game/Sprites/ship4.png");
         this.imageLoader.Load(function () { gameTS.ResourcesLoaded(); });
         $("#newGameBtn").on('click touchstart', function () { gameTS.Restart(); });
         this.Restart();

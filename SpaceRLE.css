@@ -60,6 +60,11 @@
     background-image: url("Game/Sprites/ship1.png");
 }
 
+.hireShip4
+{
+    background-image: url("Game/Sprites/ship4.png");
+}
+
 .hireBtnRestore
 {
     background-color: #585889;

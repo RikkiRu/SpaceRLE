@@ -18,12 +18,19 @@ class ShipMind implements IShipMind
 
     Update(dt: number)
     {
-        this.targetUpdateCooldown -= dt;
-
-        if (this.target == null || this.targetUpdateCooldown < 0)
+        if (this.target == null || this.target.isDead)
         {
             this.target = this.targeter.SearchTarget();
-            this.targetUpdateCooldown = this.owner.template.targetsUpdateRate;
+        }
+        else if (this.target.position.DistTo(this.owner.position) > this.owner.template.attackDist)
+        {
+            this.targetUpdateCooldown -= dt;
+
+            if (this.targetUpdateCooldown < 0)
+            {
+                this.targetUpdateCooldown = this.owner.template.targetsUpdateRate;
+                this.target = this.targeter.SearchTarget();
+            }
         }
 
         if (this.target == null)
@@ -94,7 +101,7 @@ class ShipMind implements IShipMind
             if (dx === 0)
                 dx = 0.01;
 
-            targetAngle = Math.atan(dy / dx) + gameTS.renderUtils.DegToRad(180);
+            targetAngle = Math.atan(dy / dx) + Math.PI;
         }
         else
         {
@@ -108,10 +115,9 @@ class ShipMind implements IShipMind
         }
 
         let changeAngle = targetAngle - currentAngle;
-        let changeAngle2 = targetAngle - Math.PI * 2 - currentAngle;
 
-        if (Math.abs(changeAngle2) < Math.abs(changeAngle))
-            changeAngle = changeAngle2;
+        if (Math.abs(changeAngle) > Math.PI)
+            changeAngle = Math.PI * 2 - changeAngle;
 
         let canChangeByTemplate = this.owner.template.maxAngleSpeed * dt;
 

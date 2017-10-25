@@ -4,6 +4,7 @@ enum ShipType
     Ship1,
     StationSmall,
     StationBig,
+    Ship4,
 }
 
 class ShipsManager
@@ -20,6 +21,16 @@ class ShipsManager
         ship1.imageType = ImageType.Ship1;
         ship1.energyCost = 30;
         this.templates.set(ShipType.Ship1, ship1);
+
+        let ship4 = new ShipTemplate();
+        ship4.shipType = ShipType.Ship4;
+        ship4.imageType = ImageType.Ship4;
+        ship4.energyCost = 15;
+        ship4.maxMoveSpeed = 0.1;
+        ship4.maxAngleSpeed = 0.002;
+        ship4.targetsUpdateRate = 500;
+        ship4.maxHP = 15;
+        this.templates.set(ShipType.Ship4, ship4);
 
         let stationSmall = new ShipTemplate();
         stationSmall.shipType = ShipType.StationSmall;
@@ -112,6 +123,7 @@ class ShipsManager
 
         if (target.hp <= 0)
         {
+            target.isDead = true;
             gameTS.RemoveObject(target);
             this.RemoveObject(target);
         }
@@ -233,9 +245,12 @@ class Ship implements IRenderObject, IUpdatable
     position: Vector2;
     angle: number;
     hp: number;
+    isDead: boolean;
 
     Init()
     {
+        this.isDead = false;
+
         if (this.template.isStation)
             this.mind = new StationMind();
         else

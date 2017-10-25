@@ -26,10 +26,16 @@ var TeamAI = (function () {
     }
     TeamAI.prototype.GenerateWantShips = function () {
         this.wantShips = new Map();
-        this.wantShips.set(ShipType.Ship1, gameTS.renderUtils.Random(1, 4));
+        var n = gameTS.renderUtils.Random(0, 2);
+        if (n == 0)
+            this.wantShips.set(ShipType.Ship1, gameTS.renderUtils.Random(1, 4));
+        else
+            this.wantShips.set(ShipType.Ship4, gameTS.renderUtils.Random(2, 5));
     };
     TeamAI.prototype.Update = function (dt) {
         var _this = this;
+        if (gameTS.teamManager.teams.get(Team.Left).stations == 0)
+            return;
         var needEnergy = 0;
         this.wantShips.forEach(function (count, shipType) {
             needEnergy += gameTS.shipsManager.templates.get(shipType).energyCost * count;

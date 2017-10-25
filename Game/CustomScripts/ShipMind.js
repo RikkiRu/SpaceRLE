@@ -10,10 +10,15 @@ var ShipMind = (function () {
         this.fireCooldown = owner.template.fireCooldown;
     };
     ShipMind.prototype.Update = function (dt) {
-        this.targetUpdateCooldown -= dt;
-        if (this.target == null || this.targetUpdateCooldown < 0) {
+        if (this.target == null || this.target.isDead) {
             this.target = this.targeter.SearchTarget();
-            this.targetUpdateCooldown = this.owner.template.targetsUpdateRate;
+        }
+        else if (this.target.position.DistTo(this.owner.position) > this.owner.template.attackDist) {
+            this.targetUpdateCooldown -= dt;
+            if (this.targetUpdateCooldown < 0) {
+                this.targetUpdateCooldown = this.owner.template.targetsUpdateRate;
+                this.target = this.targeter.SearchTarget();
+            }
         }
         if (this.target == null)
             return;
@@ -60,7 +65,7 @@ var ShipMind = (function () {
             var dy = targetPos.y - currentPos.y;
             if (dx === 0)
                 dx = 0.01;
-            targetAngle = Math.atan(dy / dx) + gameTS.renderUtils.DegToRad(180);
+            targetAngle = Math.atan(dy / dx) + Math.PI;
         }
         else {
             var dx = currentPos.x - targetPos.x;
@@ -70,9 +75,8 @@ var ShipMind = (function () {
             targetAngle = Math.atan(dy / dx);
         }
         var changeAngle = targetAngle - currentAngle;
-        var changeAngle2 = targetAngle - Math.PI * 2 - currentAngle;
-        if (Math.abs(changeAngle2) < Math.abs(changeAngle))
-            changeAngle = changeAngle2;
+        if (Math.abs(changeAngle) > Math.PI)
+            changeAngle = Math.PI * 2 - changeAngle;
         var canChangeByTemplate = this.owner.template.maxAngleSpeed * dt;
         if (Math.abs(canChangeByTemplate) < Math.abs(changeAngle)) {
             var sign = Math.sign(changeAngle);
