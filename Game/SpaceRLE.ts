@@ -23,6 +23,7 @@ enum RenderLayer
 	Bullets,
 	Stations,
 	MediumShips,
+	Explosions,
 	GUI,
 }
 
@@ -63,6 +64,7 @@ class GameTS
 		this.imageLoader.Add(ImageType.Ship1, "Game/Sprites/ship1.png");
 		this.imageLoader.Add(ImageType.Ship4, "Game/Sprites/ship4.png");
 		this.imageLoader.Add(ImageType.Ship5, "Game/Sprites/ship5.png");
+		this.imageLoader.AddMany("explosion", "Game/Sprites/explosion/", 20);
 		this.imageLoader.Load(function() { gameTS.ResourcesLoaded(); });
 
 		$("#newGameBtn").on('click touchstart', function() { gameTS.Restart(); });

@@ -19,7 +19,8 @@ var RenderLayer;
     RenderLayer[RenderLayer["Bullets"] = 2] = "Bullets";
     RenderLayer[RenderLayer["Stations"] = 3] = "Stations";
     RenderLayer[RenderLayer["MediumShips"] = 4] = "MediumShips";
-    RenderLayer[RenderLayer["GUI"] = 5] = "GUI";
+    RenderLayer[RenderLayer["Explosions"] = 5] = "Explosions";
+    RenderLayer[RenderLayer["GUI"] = 6] = "GUI";
 })(RenderLayer || (RenderLayer = {}));
 var GameTS = (function () {
     function GameTS() {
@@ -42,6 +43,7 @@ var GameTS = (function () {
         this.imageLoader.Add(ImageType.Ship1, "Game/Sprites/ship1.png");
         this.imageLoader.Add(ImageType.Ship4, "Game/Sprites/ship4.png");
         this.imageLoader.Add(ImageType.Ship5, "Game/Sprites/ship5.png");
+        this.imageLoader.AddMany("explosion", "Game/Sprites/explosion/", 20);
         this.imageLoader.Load(function () { gameTS.ResourcesLoaded(); });
         $("#newGameBtn").on('click touchstart', function () { gameTS.Restart(); });
         this.Restart();

@@ -17,6 +17,7 @@ var ShipsManager = (function () {
         ship1.shipType = ShipType.Ship1;
         ship1.imageType = ImageType.Ship1;
         ship1.energyCost = 30;
+        ship1.dieExplosionScale = 0.5;
         this.templates.set(ShipType.Ship1, ship1);
         // Small
         var ship4 = new ShipTemplate();
@@ -42,23 +43,26 @@ var ShipsManager = (function () {
         ship5.targetsUpdateRate = 2000;
         ship5.maxHP = 200;
         ship5.attackDist = 300;
-        ship5.bulletsDamage = 20;
+        ship5.bulletsDamage = 25;
         ship5.bulletSize = 4;
         ship5.fireCooldown = 600;
+        ship5.dieExplosionScale = 1;
         this.templates.set(ShipType.Ship5, ship5);
         var stationSmall = new ShipTemplate();
         stationSmall.shipType = ShipType.StationSmall;
         stationSmall.imageType = ImageType.StationSmall;
         stationSmall.isStation = true;
         stationSmall.attackDist = 320;
-        stationSmall.maxHP = 150;
+        stationSmall.maxHP = 200;
+        stationSmall.dieExplosionScale = 1;
         this.templates.set(ShipType.StationSmall, stationSmall);
         var stationBig = new ShipTemplate();
         stationBig.shipType = ShipType.StationBig;
         stationBig.imageType = ImageType.StationBig;
         stationBig.isStation = true;
-        stationSmall.attackDist = 320;
-        stationSmall.maxHP = 200;
+        stationBig.attackDist = 320;
+        stationBig.maxHP = 250;
+        stationBig.dieExplosionScale = 1;
         this.templates.set(ShipType.StationBig, stationBig);
         this.ships = [];
         return this;
@@ -102,6 +106,8 @@ var ShipsManager = (function () {
                     team.stations--;
                 }
                 this.ships.splice(i, 1);
+                var a = new Animation(AnimationType.explosion, RenderLayer.Explosions, o.position.Clone());
+                a.scale = o.template.dieExplosionScale;
                 return;
             }
         }
@@ -118,7 +124,7 @@ var ShipsManager = (function () {
         }
         else {
             var hpText = new HpText();
-            hpText.Init(target.hp.toString(), 500, target.position.Clone());
+            hpText.Init(damage.toString(), 700, target.position.Clone());
             gameTS.renderObjects.push(hpText);
         }
     };
@@ -128,12 +134,13 @@ var HpText = (function () {
     function HpText() {
     }
     HpText.prototype.Init = function (txt, lifeTime, pos) {
+        pos.x += gameTS.renderUtils.Random(-10, 11);
         this.txt = txt;
         this.lifeTime = lifeTime;
         this.pos = pos;
     };
     HpText.prototype.Update = function (dt) {
-        this.pos.y -= dt * 0.04;
+        this.pos.y -= dt * 0.05;
         this.lifeTime -= dt;
         if (this.lifeTime < 0)
             gameTS.RemoveObject(this);
@@ -214,6 +221,7 @@ var ShipTemplate = (function () {
         this.energyCost = 0;
         this.bulletsDamage = 5;
         this.bulletSize = 2;
+        this.dieExplosionScale = 0.3;
     }
     return ShipTemplate;
 }());

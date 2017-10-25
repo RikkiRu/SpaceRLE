@@ -8,6 +8,13 @@ var ImageLoader = (function () {
     ImageLoader.prototype.Get = function (key) {
         return this.images.get(ImageType[key]);
     };
+    ImageLoader.prototype.AddMany = function (name, path, count) {
+        for (var i = 0; i < count; i++) {
+            var data = new IMGData();
+            data.path = path + name + i + ".png";
+            this.images.set(name + i, data);
+        }
+    };
     ImageLoader.prototype.Add = function (key, path) {
         var data = new IMGData();
         data.path = path;

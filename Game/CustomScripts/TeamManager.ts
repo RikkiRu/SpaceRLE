@@ -42,14 +42,47 @@ class TeamAI implements IUpdatable
     {
         this.wantShips = new Map();
 
-        let n = gameTS.renderUtils.Random(0, 3);
+        let chances: Map<ShipType, number> = new Map();
+        chances.set(ShipType.Ship5, 20);
+        chances.set(ShipType.Ship1, 30);
+        chances.set(ShipType.Ship4, 30);
 
-        if (n == 0)
-            this.wantShips.set(ShipType.Ship1, gameTS.renderUtils.Random(1, 3));
-        else if(n == 1)
-            this.wantShips.set(ShipType.Ship4, gameTS.renderUtils.Random(1, 4));
-        else if(n == 2)
-            this.wantShips.set(ShipType.Ship5, 1);
+        let totalChances = 0;
+
+        chances.forEach((data: number, key: ShipType) =>
+        {
+            totalChances += data;
+        });
+
+        let n = gameTS.renderUtils.Random(0, totalChances);
+
+        let sum = 0;
+        let wantShip = ShipType.None;
+
+        chances.forEach((data: number, key: ShipType) =>
+        {
+            if (wantShip != ShipType.None)
+                return;
+
+            sum += data;
+
+            if (sum >= n)
+            {
+                wantShip = key;
+            }
+        });
+
+        // FRUSTRATING COMPILE ERROR without this hack :\
+        let wut = <ShipType><any>wantShip;
+
+        if (wut == ShipType.Ship1)
+            this.wantShips.set(wut, gameTS.renderUtils.Random(1, 3));
+        else if(wut == ShipType.Ship4)
+            this.wantShips.set(wut, gameTS.renderUtils.Random(1, 3));
+        else if(wut == ShipType.Ship5)
+            this.wantShips.set(wut, 1);
+        else
+            throw new Error(wut.toString());
     }
 
     Update(dt: number)

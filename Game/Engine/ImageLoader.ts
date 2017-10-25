@@ -13,6 +13,16 @@ class ImageLoader
         return this.images.get(ImageType[key]);
     }
 
+    AddMany(name: string, path: string, count: number)
+    {
+        for(let i=0; i<count; i++)
+        {
+            let data = new IMGData();
+            data.path = path + name + i + ".png";
+            this.images.set(name + i, data);
+        }
+    }
+
     Add(key: ImageType, path: string)
     {
         let data = new IMGData();

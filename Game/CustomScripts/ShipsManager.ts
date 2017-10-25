@@ -22,6 +22,7 @@ class ShipsManager
         ship1.shipType = ShipType.Ship1;
         ship1.imageType = ImageType.Ship1;
         ship1.energyCost = 30;
+        ship1.dieExplosionScale = 0.5;
         this.templates.set(ShipType.Ship1, ship1);
 
         // Small
@@ -49,9 +50,10 @@ class ShipsManager
         ship5.targetsUpdateRate = 2000;
         ship5.maxHP = 200;
         ship5.attackDist = 300;
-        ship5.bulletsDamage = 20;
+        ship5.bulletsDamage = 25;
         ship5.bulletSize = 4;
         ship5.fireCooldown = 600;
+        ship5.dieExplosionScale = 1;
         this.templates.set(ShipType.Ship5, ship5);
 
         let stationSmall = new ShipTemplate();
@@ -59,15 +61,17 @@ class ShipsManager
         stationSmall.imageType = ImageType.StationSmall;
         stationSmall.isStation = true;
         stationSmall.attackDist = 320;
-        stationSmall.maxHP = 150;
+        stationSmall.maxHP = 200;
+        stationSmall.dieExplosionScale = 1;
         this.templates.set(ShipType.StationSmall, stationSmall);
 
         let stationBig = new ShipTemplate();
         stationBig.shipType = ShipType.StationBig;
         stationBig.imageType = ImageType.StationBig;
         stationBig.isStation = true;
-        stationSmall.attackDist = 320;
-        stationSmall.maxHP = 200;
+        stationBig.attackDist = 320;
+        stationBig.maxHP = 250;
+        stationBig.dieExplosionScale = 1;
         this.templates.set(ShipType.StationBig, stationBig);
 
         this.ships = [];
@@ -130,7 +134,11 @@ class ShipsManager
                     team.stations--;
                 }
 
-				this.ships.splice(i, 1);
+                this.ships.splice(i, 1);
+
+                let a = new Animation(AnimationType.explosion, RenderLayer.Explosions, o.position.Clone());
+                a.scale = o.template.dieExplosionScale;
+
 				return;
 			}
 		}
@@ -152,7 +160,7 @@ class ShipsManager
         else
         {
             let hpText = new HpText();
-            hpText.Init(target.hp.toString(), 500, target.position.Clone());
+            hpText.Init(damage.toString(), 700, target.position.Clone());
             gameTS.renderObjects.push(hpText);
         }
     }
@@ -166,6 +174,7 @@ class HpText implements IRenderObject, IUpdatable
 
     Init(txt: string, lifeTime: number, pos: Vector2)
     {
+        pos.x += gameTS.renderUtils.Random(-10, 11);
         this.txt = txt;
         this.lifeTime = lifeTime;
         this.pos = pos;
@@ -173,7 +182,7 @@ class HpText implements IRenderObject, IUpdatable
 
     Update(dt: number)
     {
-        this.pos.y -= dt * 0.04;
+        this.pos.y -= dt * 0.05;
 
         this.lifeTime -= dt;
         if (this.lifeTime < 0)
@@ -294,6 +303,7 @@ class ShipTemplate
     energyCost: number;
     bulletsDamage: number;
     bulletSize: number;
+    dieExplosionScale: number;
 
     constructor()
     {
@@ -307,5 +317,6 @@ class ShipTemplate
         this.energyCost = 0;
         this.bulletsDamage = 5;
         this.bulletSize = 2;
+        this.dieExplosionScale = 0.3;
     }
 }

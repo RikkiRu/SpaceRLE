@@ -26,13 +26,35 @@ var TeamAI = (function () {
     }
     TeamAI.prototype.GenerateWantShips = function () {
         this.wantShips = new Map();
-        var n = gameTS.renderUtils.Random(0, 3);
-        if (n == 0)
-            this.wantShips.set(ShipType.Ship1, gameTS.renderUtils.Random(1, 3));
-        else if (n == 1)
-            this.wantShips.set(ShipType.Ship4, gameTS.renderUtils.Random(1, 4));
-        else if (n == 2)
-            this.wantShips.set(ShipType.Ship5, 1);
+        var chances = new Map();
+        chances.set(ShipType.Ship5, 20);
+        chances.set(ShipType.Ship1, 30);
+        chances.set(ShipType.Ship4, 30);
+        var totalChances = 0;
+        chances.forEach(function (data, key) {
+            totalChances += data;
+        });
+        var n = gameTS.renderUtils.Random(0, totalChances);
+        var sum = 0;
+        var wantShip = ShipType.None;
+        chances.forEach(function (data, key) {
+            if (wantShip != ShipType.None)
+                return;
+            sum += data;
+            if (sum >= n) {
+                wantShip = key;
+            }
+        });
+        // FRUSTRATING COMPILE ERROR without this hack :\
+        var wut = wantShip;
+        if (wut == ShipType.Ship1)
+            this.wantShips.set(wut, gameTS.renderUtils.Random(1, 3));
+        else if (wut == ShipType.Ship4)
+            this.wantShips.set(wut, gameTS.renderUtils.Random(1, 3));
+        else if (wut == ShipType.Ship5)
+            this.wantShips.set(wut, 1);
+        else
+            throw new Error(wut.toString());
     };
     TeamAI.prototype.Update = function (dt) {
         var _this = this;
