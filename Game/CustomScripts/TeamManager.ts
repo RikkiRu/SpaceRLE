@@ -42,14 +42,15 @@ class TeamAI implements IUpdatable
     {
         this.wantShips = new Map();
 
-        let chances: Map<ShipType, number> = new Map();
-        chances.set(ShipType.Ship5, 20);
-        chances.set(ShipType.Ship1, 30);
-        chances.set(ShipType.Ship4, 30);
+        let chances: Map<string, number> = new Map();
+        chances.set("Ship5", 30);
+        chances.set("Ship1", 30);
+        chances.set("Ship4", 30);
+        chances.set("Ship1, Ship4_2", 30);
 
         let totalChances = 0;
 
-        chances.forEach((data: number, key: ShipType) =>
+        chances.forEach((data: number, key: string) =>
         {
             totalChances += data;
         });
@@ -57,11 +58,11 @@ class TeamAI implements IUpdatable
         let n = gameTS.renderUtils.Random(0, totalChances);
 
         let sum = 0;
-        let wantShip = ShipType.None;
+        let wantShip = ""
 
-        chances.forEach((data: number, key: ShipType) =>
+        chances.forEach((data: number, key: string) =>
         {
-            if (wantShip != ShipType.None)
+            if (wantShip != "")
                 return;
 
             sum += data;
@@ -72,17 +73,22 @@ class TeamAI implements IUpdatable
             }
         });
 
-        // FRUSTRATING COMPILE ERROR without this hack :\
-        let wut = <ShipType><any>wantShip;
-
-        if (wut == ShipType.Ship1)
-            this.wantShips.set(wut, gameTS.renderUtils.Random(1, 3));
-        else if(wut == ShipType.Ship4)
-            this.wantShips.set(wut, gameTS.renderUtils.Random(1, 3));
-        else if(wut == ShipType.Ship5)
-            this.wantShips.set(wut, 1);
+        if (wantShip == "Ship1")
+            this.wantShips.set(ShipType.Ship1, gameTS.renderUtils.Random(1, 3));
+        else if(wantShip == "Ship4")
+            this.wantShips.set(ShipType.Ship4, gameTS.renderUtils.Random(1, 5));
+        else if(wantShip == "Ship5")
+        {
+            this.wantShips.set(ShipType.Ship5, 1);
+            this.wantShips.set(ShipType.Ship1, 1);
+        }
+        else if(wantShip == "Ship1, Ship4_2")
+        {
+            this.wantShips.set(ShipType.Ship1, 1);
+            this.wantShips.set(ShipType.Ship4, 2);
+        }
         else
-            throw new Error(wut.toString());
+            throw new Error(wantShip);
     }
 
     Update(dt: number)
@@ -99,10 +105,10 @@ class TeamAI implements IUpdatable
 
         if (this.owner.energy >= needEnergy)
         {
+            let posInZone = gameTS.hireController.hireZoneRectR.GetRandomPoint();
+
             this.wantShips.forEach((count: number, shipType: ShipType) =>
             {
-                let posInZone = gameTS.hireController.hireZoneRectR.GetRandomPoint();
-
                 for (let i=0; i<count; i++)
                 {
                     let pos: Vector2 = null;

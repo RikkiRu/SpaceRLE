@@ -27,34 +27,39 @@ var TeamAI = (function () {
     TeamAI.prototype.GenerateWantShips = function () {
         this.wantShips = new Map();
         var chances = new Map();
-        chances.set(ShipType.Ship5, 20);
-        chances.set(ShipType.Ship1, 30);
-        chances.set(ShipType.Ship4, 30);
+        chances.set("Ship5", 30);
+        chances.set("Ship1", 30);
+        chances.set("Ship4", 30);
+        chances.set("Ship1, Ship4_2", 30);
         var totalChances = 0;
         chances.forEach(function (data, key) {
             totalChances += data;
         });
         var n = gameTS.renderUtils.Random(0, totalChances);
         var sum = 0;
-        var wantShip = ShipType.None;
+        var wantShip = "";
         chances.forEach(function (data, key) {
-            if (wantShip != ShipType.None)
+            if (wantShip != "")
                 return;
             sum += data;
             if (sum >= n) {
                 wantShip = key;
             }
         });
-        // FRUSTRATING COMPILE ERROR without this hack :\
-        var wut = wantShip;
-        if (wut == ShipType.Ship1)
-            this.wantShips.set(wut, gameTS.renderUtils.Random(1, 3));
-        else if (wut == ShipType.Ship4)
-            this.wantShips.set(wut, gameTS.renderUtils.Random(1, 3));
-        else if (wut == ShipType.Ship5)
-            this.wantShips.set(wut, 1);
+        if (wantShip == "Ship1")
+            this.wantShips.set(ShipType.Ship1, gameTS.renderUtils.Random(1, 3));
+        else if (wantShip == "Ship4")
+            this.wantShips.set(ShipType.Ship4, gameTS.renderUtils.Random(1, 5));
+        else if (wantShip == "Ship5") {
+            this.wantShips.set(ShipType.Ship5, 1);
+            this.wantShips.set(ShipType.Ship1, 1);
+        }
+        else if (wantShip == "Ship1, Ship4_2") {
+            this.wantShips.set(ShipType.Ship1, 1);
+            this.wantShips.set(ShipType.Ship4, 2);
+        }
         else
-            throw new Error(wut.toString());
+            throw new Error(wantShip);
     };
     TeamAI.prototype.Update = function (dt) {
         var _this = this;
@@ -65,12 +70,12 @@ var TeamAI = (function () {
             needEnergy += gameTS.shipsManager.templates.get(shipType).energyCost * count;
         });
         if (this.owner.energy >= needEnergy) {
+            var posInZone_1 = gameTS.hireController.hireZoneRectR.GetRandomPoint();
             this.wantShips.forEach(function (count, shipType) {
-                var posInZone = gameTS.hireController.hireZoneRectR.GetRandomPoint();
                 for (var i = 0; i < count; i++) {
                     var pos = null;
                     do {
-                        pos = posInZone.Clone();
+                        pos = posInZone_1.Clone();
                         pos.x += gameTS.renderUtils.Random(-30, 30);
                         pos.y += gameTS.renderUtils.Random(-30, 30);
                     } while (!gameTS.hireController.hireZoneRectR.IsInside(pos));
