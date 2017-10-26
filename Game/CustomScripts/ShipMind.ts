@@ -89,35 +89,78 @@ class ShipMind implements IShipMind
 
         let currentPos = this.owner.position;
         let targetPos = target.position;
-        let currentAngle = this.owner.angle;
 
         let targetAngle = 0;
 
-        if (currentPos.x > targetPos.x)
+        let dx = targetPos.x - currentPos.x;
+        let dy = targetPos.y - currentPos.y;
+        let dxAbs = Math.abs(dx);
+        let dyAbs = Math.abs(dy);
+
+        let a = 0;
+        let offset = 0;
+        let targetIsCurrent = false;
+
+        if (dx > 0)
         {
-            let dx = targetPos.x - currentPos.x;
-            let dy = targetPos.y - currentPos.y;
-
-            if (dx === 0)
-                dx = 0.01;
-
-            targetAngle = Math.atan(dy / dx) + Math.PI;
+            if (dy > 0)
+            {
+                offset = 0;
+                a = dyAbs / dxAbs;
+            }
+            else
+            {
+                if (dy == 0)
+                {
+                    a = 0;
+                    offset = 0;
+                }
+                else
+                {
+                    a = dxAbs / dyAbs;
+                    offset = 1.5 * Math.PI;
+                }
+            }
         }
         else
         {
-            let dx = currentPos.x - targetPos.x;
-            let dy = currentPos.y - targetPos.y;
+            if (dy > 0)
+            {
+                a = dxAbs / dyAbs;
+                offset = 0.5 * Math.PI;
+            }
+            else
+            {
+               if (dx == 0)
+               {
+                   a = 0;
+                   offset = 1.5 * Math.PI;
+               }
+               else
+               {
+                   a = dyAbs / dxAbs;
+                   offset = Math.PI;
+               }
+            }
+        }
 
-            if (dx === 0)
-                dx = 0.01;
+        let currentAngle = this.owner.angle % (Math.PI * 2);
+        while (currentAngle < 0)
+            currentAngle += Math.PI * 2;
 
-            targetAngle = Math.atan(dy / dx);
+        if (targetIsCurrent)
+            targetAngle = currentAngle;
+        else
+        {
+            targetAngle = offset + Math.atan(a);
         }
 
         let changeAngle = targetAngle - currentAngle;
 
-        if (Math.abs(changeAngle) > Math.PI)
-            changeAngle = Math.PI * 2 - changeAngle;
+        if (changeAngle > Math.PI)
+            changeAngle -= Math.PI * 2;
+        else if(changeAngle < -Math.PI)
+            changeAngle += Math.PI * 2;
 
         let canChangeByTemplate = this.owner.template.maxAngleSpeed * dt;
 

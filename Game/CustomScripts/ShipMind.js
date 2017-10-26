@@ -58,25 +58,59 @@ var ShipMind = (function () {
             return;
         var currentPos = this.owner.position;
         var targetPos = target.position;
-        var currentAngle = this.owner.angle;
         var targetAngle = 0;
-        if (currentPos.x > targetPos.x) {
-            var dx = targetPos.x - currentPos.x;
-            var dy = targetPos.y - currentPos.y;
-            if (dx === 0)
-                dx = 0.01;
-            targetAngle = Math.atan(dy / dx) + Math.PI;
+        var dx = targetPos.x - currentPos.x;
+        var dy = targetPos.y - currentPos.y;
+        var dxAbs = Math.abs(dx);
+        var dyAbs = Math.abs(dy);
+        var a = 0;
+        var offset = 0;
+        var targetIsCurrent = false;
+        if (dx > 0) {
+            if (dy > 0) {
+                offset = 0;
+                a = dyAbs / dxAbs;
+            }
+            else {
+                if (dy == 0) {
+                    a = 0;
+                    offset = 0;
+                }
+                else {
+                    a = dxAbs / dyAbs;
+                    offset = 1.5 * Math.PI;
+                }
+            }
         }
         else {
-            var dx = currentPos.x - targetPos.x;
-            var dy = currentPos.y - targetPos.y;
-            if (dx === 0)
-                dx = 0.01;
-            targetAngle = Math.atan(dy / dx);
+            if (dy > 0) {
+                a = dxAbs / dyAbs;
+                offset = 0.5 * Math.PI;
+            }
+            else {
+                if (dx == 0) {
+                    a = 0;
+                    offset = 1.5 * Math.PI;
+                }
+                else {
+                    a = dyAbs / dxAbs;
+                    offset = Math.PI;
+                }
+            }
+        }
+        var currentAngle = this.owner.angle % (Math.PI * 2);
+        while (currentAngle < 0)
+            currentAngle += Math.PI * 2;
+        if (targetIsCurrent)
+            targetAngle = currentAngle;
+        else {
+            targetAngle = offset + Math.atan(a);
         }
         var changeAngle = targetAngle - currentAngle;
-        if (Math.abs(changeAngle) > Math.PI)
-            changeAngle = Math.PI * 2 - changeAngle;
+        if (changeAngle > Math.PI)
+            changeAngle -= Math.PI * 2;
+        else if (changeAngle < -Math.PI)
+            changeAngle += Math.PI * 2;
         var canChangeByTemplate = this.owner.template.maxAngleSpeed * dt;
         if (Math.abs(canChangeByTemplate) < Math.abs(changeAngle)) {
             var sign = Math.sign(changeAngle);

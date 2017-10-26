@@ -247,6 +247,11 @@ class Ship implements IRenderObject, IUpdatable
         let img =  gameTS.imageLoader.Get(imgType);
         ctx.drawImage(img.raw, -img.raw.width / 2, -img.raw.height / 2);
         ctx.restore();
+
+        //ctx.beginPath();
+        //ctx.fillStyle = "#D82D33";
+        //ctx.font="15px Verdana";
+        //ctx.fillText((this.angle / Math.PI).toFixed(2).toString(), this.position.x, this.position.y + 20);
     }
 }
 
@@ -273,7 +278,7 @@ class Targeter
         {
             let ship = gameTS.shipsManager.ships[i];
 
-            if (ship.team === this.owner.team || ship.team === Team.None)
+            if (ship.team === this.owner.team || ship.team === Team.None || ship.isDead)
                 continue;
 
             let dist = this.owner.position.DistTo(ship.position);
