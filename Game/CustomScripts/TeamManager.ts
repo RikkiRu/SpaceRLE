@@ -30,11 +30,19 @@ class TeamAI implements IUpdatable
 {
     owner: TeamData;
     wantShips: Map<ShipType, number>;
+    spawnZoneRect: Rect;
+    spawnDir: number;
+    protectCooldownCurrent: number;
+    protectCooldownMax: number;
 
     constructor(owner: TeamData)
     {
         this.owner = owner;
         this.wantShips = null;
+        this.spawnZoneRect = gameTS.hireController.hireZoneRectR;
+        this.spawnDir = gameTS.renderUtils.DegToRad(180);
+        this.protectCooldownMax = 1000;
+        this.protectCooldownCurrent = this.protectCooldownMax;
         this.GenerateWantShips();
     }
 
@@ -45,8 +53,9 @@ class TeamAI implements IUpdatable
         let chances: Map<string, number> = new Map();
         chances.set("Ship5", 30);
         chances.set("Ship1", 30);
-        chances.set("Ship4", 30);
-        chances.set("Ship1, Ship4_2", 30);
+        chances.set("Ship4", 5);
+        chances.set("Ship1, Ship4", 5);
+        chances.set("Ship5, Ship1", 30);
 
         let totalChances = 0;
 
@@ -58,7 +67,7 @@ class TeamAI implements IUpdatable
         let n = gameTS.renderUtils.Random(0, totalChances);
 
         let sum = 0;
-        let wantShip = ""
+        let wantShip = "";
 
         chances.forEach((data: number, key: string) =>
         {
@@ -74,27 +83,88 @@ class TeamAI implements IUpdatable
         });
 
         if (wantShip == "Ship1")
-            this.wantShips.set(ShipType.Ship1, gameTS.renderUtils.Random(1, 3));
+            this.wantShips.set(ShipType.Ship1, gameTS.renderUtils.Random(1, 4));
         else if(wantShip == "Ship4")
-            this.wantShips.set(ShipType.Ship4, gameTS.renderUtils.Random(1, 5));
+            this.wantShips.set(ShipType.Ship4, gameTS.renderUtils.Random(1, 3));
         else if(wantShip == "Ship5")
+            this.wantShips.set(ShipType.Ship5, gameTS.renderUtils.Random(1, 3));
+        else if(wantShip == "Ship1, Ship4")
         {
-            this.wantShips.set(ShipType.Ship5, 1);
-            this.wantShips.set(ShipType.Ship1, 1);
+            this.wantShips.set(ShipType.Ship1, 2);
+            this.wantShips.set(ShipType.Ship4, 1);
         }
-        else if(wantShip == "Ship1, Ship4_2")
+        else if(wantShip == "Ship5, Ship1")
         {
             this.wantShips.set(ShipType.Ship1, 1);
-            this.wantShips.set(ShipType.Ship4, 2);
+            this.wantShips.set(ShipType.Ship5, 1);
         }
         else
             throw new Error(wantShip);
+    }
+
+    ProtectBases()
+    {
+        for (let i in gameTS.shipsManager.ships)
+        {
+            let ship = gameTS.shipsManager.ships[i];
+            if (ship.isDead || ship.team == this.owner.team || ship.team == Team.None)
+                continue;
+
+            if (this.spawnZoneRect.IsInside(ship.position))
+            {
+                let wantSpawn: ShipType;
+
+                if (ship.template.shipType == ShipType.Ship5)
+                {
+                    wantSpawn = ShipType.Ship4;
+
+                    if (gameTS.renderUtils.Random(0, 5) == 0)
+                        wantSpawn = ShipType.Ship1;
+                    if (gameTS.renderUtils.Random(0, 5) == 0)
+                        wantSpawn = ShipType.Ship5;
+                }
+                else
+                {
+                    wantSpawn = ShipType.Ship1;
+
+                    if (gameTS.renderUtils.Random(0, 5) == 0)
+                        wantSpawn = ShipType.Ship5;
+                }
+
+                if (this.owner.energy >= gameTS.shipsManager.templates.get(wantSpawn).energyCost)
+                {
+                    let pos: Vector2;
+
+                    pos = ship.position.Clone();
+                    pos.x += gameTS.renderUtils.Random(-80, 50);
+
+                    if (gameTS.renderUtils.Random(0, 2) == 0)
+                        pos.y += gameTS.renderUtils.Random(-100, -50);
+                    else
+                        pos.y += gameTS.renderUtils.Random(50, 100);
+
+                    pos = this.spawnZoneRect.MakeInside(pos);
+
+                    gameTS.shipsManager.SpawnShip(wantSpawn, this.owner.team, pos, this.spawnDir);
+                }
+
+                this.protectCooldownCurrent = this.protectCooldownMax;
+            }
+        }
     }
 
     Update(dt: number)
     {
         if (gameTS.teamManager.teams.get(Team.Left).stations == 0)
             return;
+
+        if (this.protectCooldownCurrent > 0)
+            this.protectCooldownCurrent -= dt;
+
+        if (this.protectCooldownCurrent <= 0)
+        {
+            this.ProtectBases();
+        }
 
         let needEnergy = 0;
 
@@ -103,25 +173,24 @@ class TeamAI implements IUpdatable
              needEnergy += gameTS.shipsManager.templates.get(shipType).energyCost * count;
         });
 
+        if (needEnergy > this.owner.maxEnergy)
+            throw new Error("Too expensive set to generate: " + JSON.stringify(this.wantShips));
+
         if (this.owner.energy >= needEnergy)
         {
-            let posInZone = gameTS.hireController.hireZoneRectR.GetRandomPoint();
+            let posInZone = this.spawnZoneRect.GetRandomPoint();
 
             this.wantShips.forEach((count: number, shipType: ShipType) =>
             {
-                for (let i=0; i<count; i++)
+                for (let i = 0; i < count; i++)
                 {
                     let pos: Vector2 = null;
+                    pos = posInZone.Clone();
+                    pos.x += gameTS.renderUtils.Random(-30, 30);
+                    pos.y += gameTS.renderUtils.Random(-30, 30);
+                    pos = this.spawnZoneRect.MakeInside(pos);
 
-                    do
-                    {
-                        pos = posInZone.Clone();
-                        pos.x += gameTS.renderUtils.Random(-30, 30);
-                        pos.y += gameTS.renderUtils.Random(-30, 30);
-                    }
-                    while(!gameTS.hireController.hireZoneRectR.IsInside(pos))
-
-                    gameTS.shipsManager.SpawnShip(shipType, this.owner.team, pos, gameTS.renderUtils.DegToRad(180));
+                    gameTS.shipsManager.SpawnShip(shipType, this.owner.team, pos, this.spawnDir);
                 }
             });
 

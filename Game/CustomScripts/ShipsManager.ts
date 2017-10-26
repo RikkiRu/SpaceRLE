@@ -240,6 +240,29 @@ class Ship implements IRenderObject, IUpdatable
 
     Draw(ctx: CanvasRenderingContext2D): void
     {
+        if (!this.template.isStation)
+        {
+            let m = <ShipMind>this.mind;
+
+            if (m.arriveCurrentLineHide > 0)
+            {
+                let alpha = m.arriveCurrentLineHide / m.arriveMaxLineHide;
+
+               ctx.beginPath();
+               ctx.lineWidth = 2;
+               ctx.moveTo(m.arriveFromPosition.x, m.arriveFromPosition.y);
+
+                //if (m.arriveMode)
+                    ctx.lineTo(this.position.x, this.position.y);
+                //else
+                //    ctx.lineTo(m.arriveToPosition.x, m.arriveToPosition.y);
+
+               //ctx.strokeStyle = "#FF0000";
+               ctx.strokeStyle = 'rgba(255,0,0,' + alpha + ')';
+               ctx.stroke();
+            }
+        }
+
         ctx.save();
         ctx.translate(this.position.x, this.position.y);
         ctx.rotate(this.angle);

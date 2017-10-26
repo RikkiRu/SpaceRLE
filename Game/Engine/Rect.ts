@@ -25,6 +25,26 @@ class Rect
             && v.y <= this.leftTop.y + this.size.y;
     }
 
+    MakeInside(v: Vector2)
+    {
+        let right = this.leftTop.x + this.size.x;
+        let bottom = this.leftTop.y + this.size.y;
+
+        let r = v.Clone();
+
+        if (r.x < this.leftTop.x)
+            r.x = this.leftTop.x;
+        else if (r.x > right)
+            r.x = right;
+
+        if (r.y < this.leftTop.y)
+            r.y = this.leftTop.y;
+        else if(r.y > bottom)
+            r.y = bottom;
+
+        return r;
+    }
+
     GetRandomPoint()
     {
         let x = gameTS.renderUtils.Random(this.leftTop.x, this.leftTop.x + this.size.x);

@@ -17,6 +17,20 @@ var Rect = (function () {
             && v.x <= this.leftTop.x + this.size.x
             && v.y <= this.leftTop.y + this.size.y;
     };
+    Rect.prototype.MakeInside = function (v) {
+        var right = this.leftTop.x + this.size.x;
+        var bottom = this.leftTop.y + this.size.y;
+        var r = v.Clone();
+        if (r.x < this.leftTop.x)
+            r.x = this.leftTop.x;
+        else if (r.x > right)
+            r.x = right;
+        if (r.y < this.leftTop.y)
+            r.y = this.leftTop.y;
+        else if (r.y > bottom)
+            r.y = bottom;
+        return r;
+    };
     Rect.prototype.GetRandomPoint = function () {
         var x = gameTS.renderUtils.Random(this.leftTop.x, this.leftTop.x + this.size.x);
         var y = gameTS.renderUtils.Random(this.leftTop.y, this.leftTop.y + this.size.y);

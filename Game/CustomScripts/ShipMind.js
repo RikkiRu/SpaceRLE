@@ -3,6 +3,12 @@ var ShipMind = (function () {
     }
     ShipMind.prototype.Init = function (owner) {
         this.owner = owner;
+        this.arriveMaxLineHide = 300;
+        this.arriveCurrentLineHide = this.arriveMaxLineHide;
+        this.arriveToPosition = owner.position.Clone();
+        owner.position.x -= Math.cos(owner.angle) * 1000;
+        this.arriveFromPosition = owner.position.Clone();
+        this.arriveMode = true;
         this.targeter = new Targeter();
         this.targeter.Init(this.owner);
         this.targeter.SearchTarget();
@@ -10,6 +16,21 @@ var ShipMind = (function () {
         this.fireCooldown = owner.template.fireCooldown;
     };
     ShipMind.prototype.Update = function (dt) {
+        if (this.arriveMode) {
+            var dx = this.owner.position.x - this.arriveToPosition.x;
+            var dxByAnimation = dt * 1 * Math.cos(this.owner.angle);
+            if (Math.abs(dx) < Math.abs(dxByAnimation)) {
+                this.owner.position.x = this.arriveToPosition.x;
+                this.arriveMode = false;
+            }
+            else
+                this.owner.position.x += dxByAnimation;
+            return;
+        }
+        if (this.arriveCurrentLineHide > 0) {
+            this.arriveCurrentLineHide -= dt;
+            return;
+        }
         if (this.target == null || this.target.isDead) {
             this.target = this.targeter.SearchTarget();
         }
