@@ -1,3 +1,9 @@
+class JsonRect
+{
+    leftTop: JsonVector2;
+    size: JsonVector2;
+}
+
 class Rect
 {
     leftTop: Vector2;
@@ -7,6 +13,13 @@ class Rect
     {
         this.leftTop = new Vector2().Init(left, top);
         this.size = new Vector2().Init(width, height);
+        return this;
+    }
+
+    Parse(data: JsonRect)
+    {
+        this.leftTop = new Vector2().Parse(data.leftTop);
+        this.size = new Vector2().Parse(data.size);
         return this;
     }
 
@@ -47,8 +60,8 @@ class Rect
 
     GetRandomPoint()
     {
-        let x = gameTS.renderUtils.Random(this.leftTop.x, this.leftTop.x + this.size.x);
-        let y = gameTS.renderUtils.Random(this.leftTop.y, this.leftTop.y + this.size.y);
+        let x = RenderUtils.instance.Random(this.leftTop.x, this.leftTop.x + this.size.x);
+        let y = RenderUtils.instance.Random(this.leftTop.y, this.leftTop.y + this.size.y);
         return new Vector2().Init(x, y);
     }
 }

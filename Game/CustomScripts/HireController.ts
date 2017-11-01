@@ -104,7 +104,7 @@ class ShipPreview implements IRenderObject
     Init(shipType: ShipType)
     {
         this.shipType = shipType;
-        this.shipAngle = gameTS.renderUtils.DegToRad(0);
+        this.shipAngle = RenderUtils.instance.DegToRad(0);
     }
 
     GetLayer(): RenderLayer

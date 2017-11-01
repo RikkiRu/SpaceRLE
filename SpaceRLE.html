@@ -20,6 +20,7 @@
 		<script type="text/javascript" src="Game/Engine/RenderUtils.js"></script>
 		<script type="text/javascript" src="Game/Engine/Rect.js"></script>
 		<script type="text/javascript" src="Game/Engine/Animation.js"></script>
+		<script type="text/javascript" src="Game/Engine/Color.js"></script>
 
 		<!-- Game scripts -->
 		<script type="text/javascript" src="Game/SpaceRLE.js"></script>
@@ -30,6 +31,8 @@
 		<script type="text/javascript" src="Game/CustomScripts/ShipMind.js"></script>
 		<script type="text/javascript" src="Game/CustomScripts/TeamManager.js"></script>
 		<script type="text/javascript" src="Game/CustomScripts/Bullet.js"></script>
+		<script type="text/javascript" src="Game/CustomScripts/JsonSaveData.js"></script>
+		<script type="text/javascript" src="Game/CustomScripts/SaveDataController.js"></script>
 
 		<link rel="stylesheet" href="SpaceRLE.css" type="text/css">
 
@@ -38,43 +41,44 @@
 	<body style="width: 100%; height: 100%; overflow: hidden; padding: 0; margin: 0; user-select: none;">
 		<canvas id="canvasMain" style="background-color: #0C062D; width: 100%; height: 100%;"></canvas>
 
-		<div id="imgEnergy"></div>
-		<div id="energyLabel"> 5 / 10 </div>
+		<div id="battleGUI">
 
-		<div id="newGameBtn" class="newGameBtn"> NEW GAME </div>
+			<div id="imgEnergy"></div>
+			<div id="energyLabel"> 5 / 10 </div>
 
+			<div id="newGameBtn" class="newGameBtn"> NEW GAME </div>
 
-		<div class="hireBtns">
+			<div class="hireBtns">
 
-			<div id="hireBtn_Ship4" class="hireBtn hireShip4">
-				<div id="hireBtnRestore_Ship4" class="hireBtnRestore"></div>
+				<div id="hireBtn_Ship4" class="hireBtn hireShip4">
+					<div id="hireBtnRestore_Ship4" class="hireBtnRestore"></div>
 
-				<div class="hireBtnTitle">
-					<div class="hireBtnCost"></div>
-					<div id="hireCost_Ship4" class="hireBtnCostLabel">?</div>
+					<div class="hireBtnTitle">
+						<div class="hireBtnCost"></div>
+						<div id="hireCost_Ship4" class="hireBtnCostLabel">?</div>
+					</div>
+				</div>
+
+				<div id="hireBtn_Ship1" class="hireBtn hireShip1">
+					<div id="hireBtnRestore_Ship1" class="hireBtnRestore"></div>
+
+					<div class="hireBtnTitle">
+						<div class="hireBtnCost"></div>
+						<div id="hireCost_Ship1" class="hireBtnCostLabel">?</div>
+					</div>
+				</div>
+
+				<div id="hireBtn_Ship5" class="hireBtn hireShip5">
+					<div id="hireBtnRestore_Ship5" class="hireBtnRestore"></div>
+
+					<div class="hireBtnTitle">
+						<div class="hireBtnCost"></div>
+						<div id="hireCost_Ship5" class="hireBtnCostLabel">?</div>
+					</div>
 				</div>
 			</div>
 
-			<div id="hireBtn_Ship1" class="hireBtn hireShip1">
-				<div id="hireBtnRestore_Ship1" class="hireBtnRestore"></div>
-
-				<div class="hireBtnTitle">
-					<div class="hireBtnCost"></div>
-					<div id="hireCost_Ship1" class="hireBtnCostLabel">?</div>
-				</div>
-			</div>
-
-			<div id="hireBtn_Ship5" class="hireBtn hireShip5">
-				<div id="hireBtnRestore_Ship5" class="hireBtnRestore"></div>
-
-				<div class="hireBtnTitle">
-					<div class="hireBtnCost"></div>
-					<div id="hireCost_Ship5" class="hireBtnCostLabel">?</div>
-				</div>
-			</div>
 		</div>
-
-
 
 	</body>
 

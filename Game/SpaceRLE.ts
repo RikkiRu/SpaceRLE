@@ -6,6 +6,13 @@ $(document).ready(function()
 	gameTS.Start();
 });
 
+enum GameMode
+{
+	None,
+	Battle,
+	Map,
+}
+
 enum ImageType
 {
     None,
@@ -20,6 +27,7 @@ enum RenderLayer
 {
 	None,
 	SelectionGUI,
+	Planets,
 	Bullets,
 	Stations,
 	MediumShips,
@@ -40,8 +48,11 @@ class GameTS
 	renderObjects: IRenderObject[];
 	hireController: HireController;
 	shipsManager: ShipsManager;
-	renderUtils: RenderUtils;
 	teamManager: TeamManager;
+	currentGameMode: GameMode;
+	battleButtonsSubscribed: boolean;
+	saveData: SaveData;
+	saveDataController: SaveDataControler;
 
  	Start()
 	{
@@ -56,7 +67,12 @@ class GameTS
 		this.camera.scale = new Vector2().Init(scale, scale);
 		this.mouseData = new MouseData().Init(this.canvas, this.camera);
 		this.render = new Render().Init();
-		this.renderUtils = new RenderUtils();
+		this.battleButtonsSubscribed = false;
+
+		this.saveData = new SaveData();
+		this.saveDataController = new SaveDataControler();
+		this.saveDataController.Init(this.saveData);
+		this.saveDataController.Generate();
 
 		this.imageLoader = new ImageLoader().Init();
 		this.imageLoader.Add(ImageType.StationSmall, "Game/Sprites/tribase-u1-d0.png");
@@ -67,14 +83,16 @@ class GameTS
 		this.imageLoader.AddMany("explosion", "Game/Sprites/explosion/", 20);
 		this.imageLoader.Load(function() { gameTS.ResourcesLoaded(); });
 
-		$("#newGameBtn").on('click touchstart', function() { gameTS.Restart(); });
+		$("#newGameBtn").on('click touchstart', function() { gameTS.StartBattle(); });
 
-		this.Restart();
-		this.SubscribeButtons();
+		this.StartMap();
+		//this.StartBattle();
 	}
 
-	SubscribeButtons()
+	SubscribeBattleButtons()
 	{
+		this.battleButtonsSubscribed = true;
+
 		$("#hireShip1").on('click touchstart', function() { gameTS.hireController.PrepareToHire(ShipType.Ship1) });
 
 		const values = Object.keys(ShipType).map(k => ShipType[k]).filter(v => typeof v === "string") as string[];
@@ -103,15 +121,34 @@ class GameTS
 		this.render.Render();
 	}
 
-	Restart()
+	Clear()
 	{
+		this.currentGameMode = GameMode.None;
 		this.renderObjects = [];
+		this.hireController = null;
+		this.shipsManager = null;
+		this.teamManager = null;
+		$("#battleGUI").hide();
+	}
+
+	StartMap()
+	{
+		this.Clear();
+		this.currentGameMode = GameMode.Map;
+	}
+
+	StartBattle()
+	{
+		this.Clear();
+		this.currentGameMode = GameMode.Battle;
+		$("#battleGUI").show();
 
 		this.hireController = new HireController();
 		this.shipsManager = new ShipsManager().Init();
 		this.teamManager = new TeamManager();
 
-		this.shipsManager.ships = [];
+		if (!this.battleButtonsSubscribed)
+			this.SubscribeBattleButtons()
 
 		let dxSmall = 350;
 		let dySmall = 200;
@@ -155,7 +192,7 @@ class GameTS
 
 	ProcessMouse(isDown: boolean)
 	{
-		if (this.hireController.ProcessMouse(isDown))
+		if (this.currentGameMode == GameMode.Battle && this.hireController.ProcessMouse(isDown))
 			return;
 	}
 }

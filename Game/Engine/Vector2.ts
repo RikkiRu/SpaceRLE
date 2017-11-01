@@ -1,7 +1,28 @@
+class JsonVector2
+{
+	x: number;
+	y: number;
+}
+
 class Vector2
 {
 	x = 0;
 	y = 0;
+
+	Save()
+	{
+		let json = new JsonVector2();
+		json.x = this.x;
+		json.y = this.y;
+		return json;
+	}
+
+	Parse(data: JsonVector2)
+	{
+		this.x = data.x;
+		this.y = data.y;
+		return this;
+	}
 
 	Init(x: number, y: number)
 	{

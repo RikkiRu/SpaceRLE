@@ -56,7 +56,7 @@ class StationMind implements IShipMind
         {
             let dx = targetPos.x - currentPos.x;
             let dy = targetPos.y - currentPos.y;
-            targetAngle = Math.atan(dy / dx) + gameTS.renderUtils.DegToRad(180);
+            targetAngle = Math.atan(dy / dx) + RenderUtils.instance.DegToRad(180);
         }
         else
         {

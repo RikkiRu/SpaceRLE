@@ -174,7 +174,7 @@ class HpText implements IRenderObject, IUpdatable
 
     Init(txt: string, lifeTime: number, pos: Vector2)
     {
-        pos.x += gameTS.renderUtils.Random(-10, 11);
+        pos.x += RenderUtils.instance.Random(-10, 11);
         this.txt = txt;
         this.lifeTime = lifeTime;
         this.pos = pos;
