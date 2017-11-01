@@ -23,6 +23,14 @@ class Rect
         return this;
     }
 
+    Save()
+    {
+        let rect = new JsonRect();
+        rect.leftTop = this.leftTop.Save();
+        rect.size = this.size.Save();
+        return rect;
+    }
+
     Clone()
     {
         let clone = new Rect();

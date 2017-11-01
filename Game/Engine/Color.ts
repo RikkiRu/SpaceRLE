@@ -21,6 +21,16 @@ class Color
         this.a = 1;
     }
 
+    Save()
+    {
+        let color = new JsonColor();
+        color.r = this.r;
+        color.g = this.g;
+        color.b = this.b;
+        color.a = this.a;
+        return color;
+    }
+
     Parse(data: JsonColor)
     {
         this.r = data.r;
