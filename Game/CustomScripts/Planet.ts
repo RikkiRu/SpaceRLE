@@ -78,8 +78,24 @@ class Planet implements IRenderObject
         return RenderLayer.Planets;
     }
 
+    // need prerender here
     Draw(ctx: CanvasRenderingContext2D): void
     {
+        ctx.save();
+        ctx.translate(this.position.x, this.position.y);
+
+        let offset = 0;
+        let size = 0;
+
+        if (this.owner != null)
+        {
+            let imgGalo = gameTS.imageLoader.Get(ImageType.PlanetGalo);
+            let galoExtra = this.radius / 2;
+            offset = -this.radius - galoExtra;
+            size = this.radius * 2 + galoExtra * 2;
+            ctx.drawImage(imgGalo.raw, offset, offset, size, size);
+        }
+
         ctx.beginPath();
 
         if (this.owner == null)
@@ -87,7 +103,15 @@ class Planet implements IRenderObject
         else
             this.owner.color.SetCtxFillStyle(ctx);
 
-        ctx.ellipse(this.position.x, this.position.y, this.radius, this.radius, 0, 0, Math.PI * 2, false);
+        ctx.ellipse(0, 0, this.radius, this.radius, 0, 0, Math.PI * 2, false);
         ctx.fill();
+
+        let imgLight = gameTS.imageLoader.Get(ImageType.PlanetLight);
+        let lightExtra = this.radius / 2;
+        offset = -this.radius - lightExtra;
+        size = this.radius * 2 + lightExtra * 2;
+        ctx.drawImage(imgLight.raw, offset, offset, size, size);
+
+        ctx.restore();
     }
 }

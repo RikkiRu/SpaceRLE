@@ -17,6 +17,8 @@ var ImageType;
     ImageType[ImageType["Ship1"] = 3] = "Ship1";
     ImageType[ImageType["Ship4"] = 4] = "Ship4";
     ImageType[ImageType["Ship5"] = 5] = "Ship5";
+    ImageType[ImageType["PlanetGalo"] = 6] = "PlanetGalo";
+    ImageType[ImageType["PlanetLight"] = 7] = "PlanetLight";
 })(ImageType || (ImageType = {}));
 var RenderLayer;
 (function (RenderLayer) {
@@ -51,6 +53,8 @@ var GameTS = (function () {
         this.imageLoader.Add(ImageType.Ship1, "Game/Sprites/ship1.png");
         this.imageLoader.Add(ImageType.Ship4, "Game/Sprites/ship4.png");
         this.imageLoader.Add(ImageType.Ship5, "Game/Sprites/ship5.png");
+        this.imageLoader.Add(ImageType.PlanetGalo, "Game/Sprites/planetGalo.png");
+        this.imageLoader.Add(ImageType.PlanetLight, "Game/Sprites/planetLight.png");
         this.imageLoader.AddMany("explosion", "Game/Sprites/explosion/", 20);
         this.imageLoader.Load(function () { gameTS.ResourcesLoaded(); });
         $("#newGameBtn").on('click touchstart', function () { gameTS.StartBattle(); });

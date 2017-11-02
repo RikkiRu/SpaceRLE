@@ -15,7 +15,7 @@ var Fraction = (function () {
     Fraction.prototype.Init = function (id) {
         this.id = id;
         this.color = new Color();
-        this.color.Randomize(70, 256);
+        this.color.Randomize(20, 240);
         return this;
     };
     return Fraction;
