@@ -13,4 +13,9 @@ var JsonFractionData = (function () {
     }
     return JsonFractionData;
 }());
+var JsonFleetRow = (function () {
+    function JsonFleetRow() {
+    }
+    return JsonFleetRow;
+}());
 //# sourceMappingURL=JsonSaveData.js.map

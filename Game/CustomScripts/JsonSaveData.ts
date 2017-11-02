@@ -18,4 +18,11 @@ class JsonFractionData
 {
     id: number;
     color: JsonColor;
+    fleet: JsonFleetRow[];
+}
+
+class JsonFleetRow
+{
+    shipName: string;
+    count: number;
 }
