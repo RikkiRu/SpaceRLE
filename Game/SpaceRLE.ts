@@ -51,7 +51,7 @@ class GameTS
 	teamManager: TeamManager;
 	currentGameMode: GameMode;
 	battleButtonsSubscribed: boolean;
-	saveData: SaveData;
+	jsonSaveData: JsonSaveData;
 	saveDataController: SaveDataControler;
 
  	Start()
@@ -69,10 +69,7 @@ class GameTS
 		this.render = new Render().Init();
 		this.battleButtonsSubscribed = false;
 
-		this.saveData = new SaveData();
 		this.saveDataController = new SaveDataControler();
-		this.saveDataController.Init(this.saveData);
-		this.saveDataController.Generate();
 
 		this.imageLoader = new ImageLoader().Init();
 		this.imageLoader.Add(ImageType.StationSmall, "Game/Sprites/tribase-u1-d0.png");
@@ -135,6 +132,13 @@ class GameTS
 	{
 		this.Clear();
 		this.currentGameMode = GameMode.Map;
+
+		this.saveDataController.Generate();
+		this.jsonSaveData = this.saveDataController.Save(); // Save load generated to check working of saving
+		let json = JSON.stringify(this.jsonSaveData);
+		let parsed = <JsonSaveData>JSON.parse(json);
+		this.saveDataController.Load(parsed);
+		this.saveDataController.LoadToGame();
 	}
 
 	StartBattle()

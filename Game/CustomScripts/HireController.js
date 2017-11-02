@@ -66,7 +66,7 @@ var ShipPreview = (function () {
     }
     ShipPreview.prototype.Init = function (shipType) {
         this.shipType = shipType;
-        this.shipAngle = gameTS.renderUtils.DegToRad(0);
+        this.shipAngle = RenderUtils.instance.DegToRad(0);
     };
     ShipPreview.prototype.GetLayer = function () {
         return RenderLayer.GUI;

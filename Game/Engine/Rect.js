@@ -1,3 +1,8 @@
+var JsonRect = (function () {
+    function JsonRect() {
+    }
+    return JsonRect;
+}());
 var Rect = (function () {
     function Rect() {
     }
@@ -5,6 +10,17 @@ var Rect = (function () {
         this.leftTop = new Vector2().Init(left, top);
         this.size = new Vector2().Init(width, height);
         return this;
+    };
+    Rect.prototype.Parse = function (data) {
+        this.leftTop = new Vector2().Parse(data.leftTop);
+        this.size = new Vector2().Parse(data.size);
+        return this;
+    };
+    Rect.prototype.Save = function () {
+        var rect = new JsonRect();
+        rect.leftTop = this.leftTop.Save();
+        rect.size = this.size.Save();
+        return rect;
     };
     Rect.prototype.Clone = function () {
         var clone = new Rect();
@@ -32,8 +48,8 @@ var Rect = (function () {
         return r;
     };
     Rect.prototype.GetRandomPoint = function () {
-        var x = gameTS.renderUtils.Random(this.leftTop.x, this.leftTop.x + this.size.x);
-        var y = gameTS.renderUtils.Random(this.leftTop.y, this.leftTop.y + this.size.y);
+        var x = RenderUtils.instance.Random(this.leftTop.x, this.leftTop.x + this.size.x);
+        var y = RenderUtils.instance.Random(this.leftTop.y, this.leftTop.y + this.size.y);
         return new Vector2().Init(x, y);
     };
     return Rect;

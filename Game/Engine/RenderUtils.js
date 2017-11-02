@@ -4,6 +4,7 @@ var RenderUtils = (function () {
     RenderUtils.prototype.DegToRad = function (v) {
         return v * Math.PI / 180;
     };
+    // Min - include, max - exclude
     RenderUtils.prototype.Random = function (m, n) {
         return Math.floor(Math.random() * (n - m)) + m;
     };
@@ -27,4 +28,5 @@ var RenderUtils = (function () {
     ;
     return RenderUtils;
 }());
+RenderUtils.instance = new RenderUtils();
 //# sourceMappingURL=RenderUtils.js.map

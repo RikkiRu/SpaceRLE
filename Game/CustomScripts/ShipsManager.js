@@ -134,7 +134,7 @@ var HpText = (function () {
     function HpText() {
     }
     HpText.prototype.Init = function (txt, lifeTime, pos) {
-        pos.x += gameTS.renderUtils.Random(-10, 11);
+        pos.x += RenderUtils.instance.Random(-10, 11);
         this.txt = txt;
         this.lifeTime = lifeTime;
         this.pos = pos;

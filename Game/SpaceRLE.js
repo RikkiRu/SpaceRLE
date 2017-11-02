@@ -22,11 +22,12 @@ var RenderLayer;
 (function (RenderLayer) {
     RenderLayer[RenderLayer["None"] = 0] = "None";
     RenderLayer[RenderLayer["SelectionGUI"] = 1] = "SelectionGUI";
-    RenderLayer[RenderLayer["Bullets"] = 2] = "Bullets";
-    RenderLayer[RenderLayer["Stations"] = 3] = "Stations";
-    RenderLayer[RenderLayer["MediumShips"] = 4] = "MediumShips";
-    RenderLayer[RenderLayer["Explosions"] = 5] = "Explosions";
-    RenderLayer[RenderLayer["GUI"] = 6] = "GUI";
+    RenderLayer[RenderLayer["Planets"] = 2] = "Planets";
+    RenderLayer[RenderLayer["Bullets"] = 3] = "Bullets";
+    RenderLayer[RenderLayer["Stations"] = 4] = "Stations";
+    RenderLayer[RenderLayer["MediumShips"] = 5] = "MediumShips";
+    RenderLayer[RenderLayer["Explosions"] = 6] = "Explosions";
+    RenderLayer[RenderLayer["GUI"] = 7] = "GUI";
 })(RenderLayer || (RenderLayer = {}));
 var GameTS = (function () {
     function GameTS() {
@@ -42,8 +43,8 @@ var GameTS = (function () {
         this.camera.scale = new Vector2().Init(scale, scale);
         this.mouseData = new MouseData().Init(this.canvas, this.camera);
         this.render = new Render().Init();
-        this.renderUtils = new RenderUtils();
         this.battleButtonsSubscribed = false;
+        this.saveDataController = new SaveDataControler();
         this.imageLoader = new ImageLoader().Init();
         this.imageLoader.Add(ImageType.StationSmall, "Game/Sprites/tribase-u1-d0.png");
         this.imageLoader.Add(ImageType.StationBig, "Game/Sprites/tribase-u3-d0.png");
@@ -91,6 +92,12 @@ var GameTS = (function () {
     GameTS.prototype.StartMap = function () {
         this.Clear();
         this.currentGameMode = GameMode.Map;
+        this.saveDataController.Generate();
+        this.jsonSaveData = this.saveDataController.Save(); // Save load generated to check working of saving
+        var json = JSON.stringify(this.jsonSaveData);
+        var parsed = JSON.parse(json);
+        this.saveDataController.Load(parsed);
+        this.saveDataController.LoadToGame();
     };
     GameTS.prototype.StartBattle = function () {
         this.Clear();

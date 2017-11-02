@@ -18,4 +18,11 @@ class Fraction
         return this;
     }
 
+    Init(id: number)
+    {
+        this.id = id;
+        this.color = new Color();
+        this.color.Randomize(70, 256);
+        return this;
+    }
 }

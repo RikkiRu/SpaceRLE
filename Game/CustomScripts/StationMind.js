@@ -35,7 +35,7 @@ var StationMind = (function () {
         if (currentPos.x > targetPos.x) {
             var dx = targetPos.x - currentPos.x;
             var dy = targetPos.y - currentPos.y;
-            targetAngle = Math.atan(dy / dx) + gameTS.renderUtils.DegToRad(180);
+            targetAngle = Math.atan(dy / dx) + RenderUtils.instance.DegToRad(180);
         }
         else {
             var dx = currentPos.x - targetPos.x;

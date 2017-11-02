@@ -23,7 +23,7 @@ var TeamAI = (function () {
         this.owner = owner;
         this.wantShips = null;
         this.spawnZoneRect = gameTS.hireController.hireZoneRectR;
-        this.spawnDir = gameTS.renderUtils.DegToRad(180);
+        this.spawnDir = RenderUtils.instance.DegToRad(180);
         this.protectCooldownMax = 1000;
         this.protectCooldownCurrent = this.protectCooldownMax;
         this.GenerateWantShips();
@@ -40,7 +40,7 @@ var TeamAI = (function () {
         chances.forEach(function (data, key) {
             totalChances += data;
         });
-        var n = gameTS.renderUtils.Random(0, totalChances);
+        var n = RenderUtils.instance.Random(0, totalChances);
         var sum = 0;
         var wantShip = "";
         chances.forEach(function (data, key) {
@@ -52,11 +52,11 @@ var TeamAI = (function () {
             }
         });
         if (wantShip == "Ship1")
-            this.wantShips.set(ShipType.Ship1, gameTS.renderUtils.Random(1, 4));
+            this.wantShips.set(ShipType.Ship1, RenderUtils.instance.Random(1, 4));
         else if (wantShip == "Ship4")
-            this.wantShips.set(ShipType.Ship4, gameTS.renderUtils.Random(1, 3));
+            this.wantShips.set(ShipType.Ship4, RenderUtils.instance.Random(1, 3));
         else if (wantShip == "Ship5")
-            this.wantShips.set(ShipType.Ship5, gameTS.renderUtils.Random(1, 3));
+            this.wantShips.set(ShipType.Ship5, RenderUtils.instance.Random(1, 3));
         else if (wantShip == "Ship1, Ship4") {
             this.wantShips.set(ShipType.Ship1, 2);
             this.wantShips.set(ShipType.Ship4, 1);
@@ -77,24 +77,24 @@ var TeamAI = (function () {
                 var wantSpawn = void 0;
                 if (ship.template.shipType == ShipType.Ship5) {
                     wantSpawn = ShipType.Ship4;
-                    if (gameTS.renderUtils.Random(0, 5) == 0)
+                    if (RenderUtils.instance.Random(0, 5) == 0)
                         wantSpawn = ShipType.Ship1;
-                    if (gameTS.renderUtils.Random(0, 5) == 0)
+                    if (RenderUtils.instance.Random(0, 5) == 0)
                         wantSpawn = ShipType.Ship5;
                 }
                 else {
                     wantSpawn = ShipType.Ship1;
-                    if (gameTS.renderUtils.Random(0, 5) == 0)
+                    if (RenderUtils.instance.Random(0, 5) == 0)
                         wantSpawn = ShipType.Ship5;
                 }
                 if (this.owner.energy >= gameTS.shipsManager.templates.get(wantSpawn).energyCost) {
                     var pos = void 0;
                     pos = ship.position.Clone();
-                    pos.x += gameTS.renderUtils.Random(-80, 50);
-                    if (gameTS.renderUtils.Random(0, 2) == 0)
-                        pos.y += gameTS.renderUtils.Random(-100, -50);
+                    pos.x += RenderUtils.instance.Random(-80, 50);
+                    if (RenderUtils.instance.Random(0, 2) == 0)
+                        pos.y += RenderUtils.instance.Random(-100, -50);
                     else
-                        pos.y += gameTS.renderUtils.Random(50, 100);
+                        pos.y += RenderUtils.instance.Random(50, 100);
                     pos = this.spawnZoneRect.MakeInside(pos);
                     gameTS.shipsManager.SpawnShip(wantSpawn, this.owner.team, pos, this.spawnDir);
                 }
@@ -123,8 +123,8 @@ var TeamAI = (function () {
                 for (var i = 0; i < count; i++) {
                     var pos = null;
                     pos = posInZone_1.Clone();
-                    pos.x += gameTS.renderUtils.Random(-30, 30);
-                    pos.y += gameTS.renderUtils.Random(-30, 30);
+                    pos.x += RenderUtils.instance.Random(-30, 30);
+                    pos.y += RenderUtils.instance.Random(-30, 30);
                     pos = _this.spawnZoneRect.MakeInside(pos);
                     gameTS.shipsManager.SpawnShip(shipType, _this.owner.team, pos, _this.spawnDir);
                 }
